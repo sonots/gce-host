@@ -47,10 +47,6 @@ class GCE
         @open_timeout_sec ||= ENV['OPEN_TIMEOUT_SEC'] || config.fetch('OPEN_TIMEOUT_SEC', 300)
       end
 
-      def self.max_filter_metadata_index
-        @max_filter_metdata_index ||= ENV['MAX_FILTER_METADATA_INDEX'] || config.fetch('MAX_FILTER_METADATA_INDEX',10)
-      end
-
       def self.hostname_tag
         @hostname_tag ||= ENV['HOSTNAME_TAG'] || config.fetch('HOSTNAME_TAG', 'Name')
       end

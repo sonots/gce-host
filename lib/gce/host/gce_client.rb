@@ -4,9 +4,6 @@ require 'google/apis/compute_beta' # required to filter nested fields
 class GCE
   class Host
     class GCEClient
-      def initialize
-      end
-
       def client(reload = false)
         return @cached_client if @cached_client && @cached_client_expiration > Time.now && !reload
 
@@ -47,7 +44,7 @@ class GCE
         res = client.list_aggregated_instances(Config.project_id, filter: filter)
         instances.concat(res.items.values.map(&:instances).compact.flatten(1))
         while res.next_page_token
-          res = client.list_aggregated_instances(Config.project_id, filter: filter)
+          res = client.list_aggregated_instances(Config.project_id, filter: filter, page_token: res.next_page_token)
           instances.concat(res.items.values.map(&:instances).compact.flatten(1))
         end
         instances
@@ -55,27 +52,17 @@ class GCE
 
       private
       
-      # Holy shit, we can not filter for roles key
-      # Try to search 10 items anyway ...
       def build_filter(condition)
         if name = condition[:name]
           "name eq #{name}"
-        # elsif role = (condition[:role] || condition[:usage]) and role.size == 1
-        #   Config.max_filter_metadata_index.times.map do |i|
-        #     "(metadata.items[#{i}].key eq roles AND metadata.items[#{i}].value ~ #{Regexp.escape(role1.first)})"
-        #   end.join(' OR ')
-        # elsif role1 = (condition[:role1] || condition[:usage1]) and role1.size == 1
-        #   Config.max_filter_metadata_index.times.map do |i|
-        #     "(metadata.items[#{i}].key eq roles AND metadata.items[#{i}].value ~ #{Regexp.escape(role1.first)})"
-        #   end.join(' OR ')
-        # elsif role2 = (condition[:role2] || condition[:usage2]) and role2.size == 1
-        #   Config.max_filter_metadata_index.times.map do |i|
-        #     "(metadata.items[#{i}].key eq roles AND metadata.items[#{i}].value ~ #{Regexp.escape(role2.first)})"
-        #   end.join(' OR ')
-        # elsif role3 = (condition[:role3] || condition[:usage3]) and role3.size == 1
-        #   Config.max_filter_metadata_index.times.map do |i|
-        #     "(metadata.items[#{i}].key eq roles AND metadata.items[#{i}].value ~ #{Regexp.escape(role3.first)})"
-        #   end.join(' OR ')
+        elsif role = (condition[:role] || condition[:usage]) and role.size == 1
+          "labels.roles eq .*#{Regexp.escape(Array(role).first)}.*"
+        elsif role1 = (condition[:role1] || condition[:usage1]) and role1.size == 1
+          "labels.roles eq .*#{Regexp.escape(Array(role1).first)}.*"
+        elsif role2 = (condition[:role2] || condition[:usage2]) and role2.size == 1
+          "labels.roles eq .*#{Regexp.escape(Array(role2).first)}.*"
+        elsif role3 = (condition[:role3] || condition[:usage3]) and role3.size == 1
+          "labels.roles eq .*#{Regexp.escape(Array(role3).first)}.*"
         else
           nil
         end
