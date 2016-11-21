@@ -1,0 +1,7 @@
+require_relative 'gce/host/string_util'
+require_relative 'gce/host/hash_util'
+require_relative 'gce/host/config'
+require_relative 'gce/host/host_data'
+require_relative 'gce/host/role_data'
+require_relative 'gce/host/client_util'
+require_relative 'gce/host'

@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/gce/host/cli'
+GCE::Host::CLI.new(ARGV).run
