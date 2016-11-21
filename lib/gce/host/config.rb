@@ -4,18 +4,6 @@ Dotenv.load
 class GCE
   class Host
     class Config
-      class << self
-        attr_writer :config_file,
-          :auth_method
-          :json_keyfile,
-          :gce_zone,
-          :log_level,
-          :hostname_tag,
-          :roles_tag,
-          :optional_array_tags,
-          :optional_string_tags
-      end
-
       def self.configure(params)
         params.each do |key, val|
           send("#{key}=", val)
@@ -26,20 +14,41 @@ class GCE
         @config_file ||= ENV.fetch('GCE_HOST_CONFIG_FILE', '/etc/sysconfig/gce-host')
       end
 
+      def self.project_id
+        return @project_id if @project_id
+        @project_id ||= ENV['PROJECT_ID'] || config.fetch('PROJECT_ID', nil)
+        if @project_id.nil? and json_keyfile and File.readable?(json_keyfile)
+          @project_id ||= (JSON.parse(File.read(json_keyfile)) || {})['project_id']
+        end
+        @project_id
+      end
+
       def self.auth_method
-        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD') || 'compute_engine'
+        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', 'application_default')
       end
 
       def self.json_keyfile
         @json_keyfile ||= ENV['JSON_KEYFILE'] || config.fetch('JSON_KEYFILE', nil)
       end
 
-      def self.gce_zone
-        @gce_zone ||= ENV['GCE_ZONE'] || config.fetch('GCE_ZONE')
-      end
-
       def self.log_level
         @log_level ||= ENV['LOG_LEVEL'] || config.fetch('LOG_LEVEL', 'info')
+      end
+
+      def self.retries
+        @retries ||= ENV['RETRIES'] || config.fetch('RETRIES', 5)
+      end
+
+      def self.timeout_sec
+        @timeout_sec ||= ENV['TIMEOUT_SEC'] || config.fetch('TIMEOUT_SEC', 300)
+      end
+
+      def self.open_timeout_sec
+        @open_timeout_sec ||= ENV['OPEN_TIMEOUT_SEC'] || config.fetch('OPEN_TIMEOUT_SEC', 300)
+      end
+
+      def self.max_filter_metadata_index
+        @max_filter_metdata_index ||= ENV['MAX_FILTER_METADATA_INDEX'] || config.fetch('MAX_FILTER_METADATA_INDEX',10)
       end
 
       def self.hostname_tag
@@ -87,10 +96,12 @@ class GCE
       def self.config
         return @config if @config
         @config = {}
-        File.readlines(config_file).each do |line|
-          next if line.start_with?('#')
-          key, val = line.chomp.split('=', 2)
-          @config[key] = val
+        if File.exist?(config_file)
+          File.readlines(config_file).each do |line|
+            next if line.start_with?('#')
+            key, val = line.chomp.split('=', 2)
+            @config[key] = val
+          end
         end
         @config
       end
