@@ -7,13 +7,13 @@ class GCE
     # Represents each role
     class RoleData
       def self.initialize(role)
-        role1, role2, role3 = role.split(Config.role_tag_delimiter)
+        role1, role2, role3 = role.split(Config.role_label_delimiter)
         self.new(role1, role2, role3)
       end
 
       # @return [String] something like "admin:jenkins:slave"
       def role
-        @role ||= [role1, role2, role3].compact.reject(&:empty?).join(Config.role_tag_delimiter)
+        @role ||= [role1, role2, role3].compact.reject(&:empty?).join(Config.role_label_delimiter)
       end
       alias :to_s :role
 

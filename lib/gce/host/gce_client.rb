@@ -38,7 +38,7 @@ class GCE
         @cached_client = client
       end
 
-      def list_instances(condition = {})
+      def instances(condition = {})
         filter = build_filter(condition)
         instances = []
         res = client.list_aggregated_instances(Config.project_id, filter: filter)
@@ -51,18 +51,19 @@ class GCE
       end
 
       private
-      
+
+      # MEMO: OR did not work
+      # MEMO: filter for metadata and tags did not work (metadata.items[0].value eq role)
       def build_filter(condition)
-        if name = condition[:name]
-          "name eq #{name}"
-        elsif role = (condition[:role] || condition[:usage]) and role.size == 1
-          "labels.roles eq .*#{Regexp.escape(Array(role).first)}.*"
-        elsif role1 = (condition[:role1] || condition[:usage1]) and role1.size == 1
-          "labels.roles eq .*#{Regexp.escape(Array(role1).first)}.*"
-        elsif role2 = (condition[:role2] || condition[:usage2]) and role2.size == 1
-          "labels.roles eq .*#{Regexp.escape(Array(role2).first)}.*"
-        elsif role3 = (condition[:role3] || condition[:usage3]) and role3.size == 1
-          "labels.roles eq .*#{Regexp.escape(Array(role3).first)}.*"
+        if names = (condition[:hostname] || condition[:name]) and Array(names).size == 1
+          "name eq #{Array(names).first}"
+        elsif roles =
+          (condition[:role] || condition[:usage]) ||
+          (condition[:role1] || condition[:usage1]) ||
+          (condition[:role2] || condition[:usage2]) ||
+          (condition[:role3] || condition[:usage3]) and
+          Array(roles).size == 1
+          "labels.roles eq .*#{Regexp.escape(Array(roles).first)}.*"
         else
           nil
         end

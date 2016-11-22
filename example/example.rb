@@ -1,6 +1,6 @@
 require 'gce-host'
 require 'pp'
 
-GCE::Host.new(role1: 'admin').each do |host|
+GCE::Host.new(zone: 'asia-northeast1-a').each do |host|
   pp host
 end

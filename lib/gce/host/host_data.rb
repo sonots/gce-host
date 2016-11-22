@@ -1,125 +1,136 @@
-require 'forwardable'
-require 'hashie/mash'
 require 'json'
 
 class GCE
   class Host
     # Represents each host
-    class HostData < Hashie::Mash
-      # :hostname, # tag:Name or hostname part of private_dns_name
-      # :roles,    # tag:Roles.split(',') such as web:app1,db:app1
-      # :region,   # ENV['AWS_REGION'],
+    class HostData
+      attr_reader :instance
+
+      # :hostname, # hostname
+      # :roles,    # labels.role.split(',') such as web:app1,db:app1
       # :instance, # Aws::GCE::Types::Instance itself
       #
-      # and OPTIONAL_ARRAY_TAGS, OPTIONAL_STRING_TAGS
+      # and OPTIONAL_ARRAY_LABELS, OPTIONAL_STRING_LABELS
+      def initialize(instance)
+        @instance = instance
+      end
 
-      extend Forwardable
-      def_delegators :instance,
-        :instance_id,
-        :private_ip_address,
-        :public_ip_address,
-        :launch_time
-      def state; self[:instance].state.name; end
-      def monitoring; self[:instance].monitoring.state; end
+      def roles
+        return @roles if @roles
+        roles = find_array_label(Config.roles_label)
+        @roles = roles.map {|role| GCE::Host::RoleData.initialize(role) }
+      end
 
-      alias_method :ip, :private_ip_address
-      alias_method :start_date, :launch_time
-      def usages; self[:roles]; end
+      Config.optional_string_labels.each do |label|
+        field = StringUtil.underscore(label)
+        define_method(field) do
+          instance_variable_get("@#{field}") || instance_variable_set("@#{field}", find_string_label(label))
+        end
+      end
 
-      def self.initialize(instance)
-        d = self.new
-        d.instance = instance
-        d.set_hostname
-        d.set_roles
-        d.set_region
-        d.set_string_tags
-        d.set_array_tags
-        d
+      Config.optional_array_labels.each do |label|
+        field = StringUtil.underscore(label)
+        define_method(field) do
+          instance_variable_get("@#{field}") || instance_variable_set("@#{field}", find_array_label(label))
+        end
+      end
+
+      private def find_string_label(key)
+        (instance.labels || {})[key] || ''
+      end
+
+      private def find_array_label(key)
+        v = (instance.labels || {})[key]
+        v ? v.split(Config.array_label_delimiter) : []
+      end
+
+      def hostname
+        instance.name
+      end
+
+      def instance_id
+        instance.id
+      end
+
+      define_method(Config.status) do
+        instance.status
+      end
+
+      def zone
+        instance.zone.split('/').last
+      end
+
+      def machine_type
+        instance.machine_type.split('/').last
+      end
+
+      def private_ip_address
+        instance.network_interfaces.first.network_ip
+      end
+
+      def private_ip_addresses
+        instance.network_interfaces.map(&:network_ip)
+      end
+
+      def public_ip_address
+        instance.network_interfaces.first.access_configs.first.nat_ip
+      end
+
+      def public_ip_addresses
+        instance.network_interfaces.map {|i| i.access_configs.map(&:nat_ip) }.flatten(1)
+      end
+
+      def creation_timestamp
+        instance.creation_timestamp
+      end
+
+      # compatibility with dino-host
+      def ip
+        private_ip_address
+      end
+
+      # compatibility with dino-host
+      def start_date
+        creation_timestamp
+      end
+
+      # compatibility with dino-host
+      def usages
+        roles
+      end
+
+      def terminated?
+        instance.status == "TERMINATED"
+      end
+
+      def stopping?
+        instance.status == "STOPPING"
+      end
+
+      def running?
+        instance.status == "RUNNING"
+      end
+
+      def staging?
+        instance.status == "STAGING"
+      end
+
+      def provisioning?
+        instance.status == "PROVISIONING"
       end
 
       # match with condition or not
       #
       # @param [Hash] condition search parameters
       def match?(condition)
-        return false if !condition[:state] and (terminated? or shutting_down?)
+        return false if !condition[Config.status.to_sym] and (terminated? or stopping?)
         return false unless role_match?(condition)
-        condition = HashUtil.except(condition,
-          :role, :role1, :role2, :role3,
-          :usage, :usage1, :usage2, :usage3
-        )
-        condition.each do |key, values|
-          v = get_value(key)
-          if v.is_a?(Array)
-            return false unless v.find {|_| values.include?(_) }
-          else
-            return false unless values.include?(v)
-          end
-        end
+        return false unless status_match?(condition)
+        return false unless instance_match?(condition)
         true
       end
 
-      def inspect
-        sprintf "#<Aws::Host::HostData %s>", info
-      end
-
-      def info
-        if self[:hostname] and self[:status] and self[:roles] and self[:tags] and self[:service]
-          # special treatment for DeNA ;)
-          info = "#{self[:hostname]}:#{self[:status]}"
-          info << "(#{self[:roles].join(' ')})" unless self[:roles].empty?
-          info << "[#{self[:tags].join(' ')}]" unless self[:tags].empty?
-          info << "{#{self[:service]}}" unless self[:service].empty?
-          info
-        else
-          to_hash.to_s
-        end
-      end
-
-      def to_hash
-        HashUtil.except(self, :instance).to_h.merge(
-          instance_id: instance_id,
-          private_ip_address: private_ip_address,
-          public_ip_address: public_ip_address,
-          launch_time: launch_time,
-          state: state,
-          monitoring: monitoring,
-        )
-      end
-
-      # private
-
-      # "instance.instance_id" => self.send("instance").send("instance_id")
-      def get_value(key)
-        v = self
-        key.to_s.split('.').each {|k| v = v[k] || v.send(k) }
-        v
-      end
-
-      def terminated?
-        state == "terminated"
-      end
-
-      def shutting_down?
-        state == "shutting-down"
-      end
-
-      def stopping?
-        state == "stopping"
-      end
-
-      def stopped
-        state == "stopped"
-      end
-
-      def running?
-        state == "running"
-      end
-
-      def pending?
-        state == "pending"
-      end
-
-      def role_match?(condition)
+      private def role_match?(condition)
         # usage is an alias of role
         if role = (condition[:role] || condition[:usage])
           role1, role2, role3 = role.first.split(':')
@@ -129,47 +140,89 @@ class GCE
           role3 = (condition[:role3] || condition[:usage3] || []).first
         end
         if role1
-          return false unless self[:roles].find {|role| role.match?(role1, role2, role3) }
+          return false unless roles.find {|role| role.match?(role1, role2, role3) }
         end
         true
       end
 
-      def set_hostname
-        self[:hostname] = find_string_tag(Config.hostname_tag)
-        self[:hostname] = self[:instance].private_dns_name.split('.').first if self[:hostname].empty?
+      private def status_match?(condition)
+        if values = condition[Config.status.to_sym]
+          return false unless values.map(&:downcase).include?(send(Config.status).downcase)
+        end
+        true
       end
 
-      def set_roles
-        roles  = find_array_tag(Config.roles_tag)
-        self[:roles] = roles.map {|role| GCE::Host::RoleData.initialize(role) }
+      private def instance_match?(condition)
+        condition = HashUtil.except(condition, :role, :role1, :role2, :role3, :usage, :usage1, :usage2, :usage3, Config.status.to_sym)
+        condition.each do |key, values|
+          v = instance_variable_recursive_get(key)
+          if v.is_a?(Array)
+            return false unless v.find {|_| values.include?(_) }
+          else
+            return false unless values.include?(v)
+          end
+        end
+        true
       end
 
-      def set_region
-        self[:region] = Config.aws_region
+      # "instance.instance_id" => self.instance.instance_id
+      private def instance_variable_recursive_get(key)
+        v = self
+        key.to_s.split('.').each {|k| v = v.send(k) }
+        v
       end
 
-      def set_string_tags
-        Config.optional_string_tags.each do |tag|
-          field = StringUtil.underscore(tag)
-          self[field] = find_string_tag(tag)
+      def to_hash
+        params = {
+          "hostname" => hostname,
+          "roles" => roles,
+        }
+        Config.optional_string_labels.each do |label|
+          field = StringUtil.underscore(label)
+          params[field] = send(field)
+        end
+        Config.optional_array_labels.each do |label|
+          field = StringUtil.underscore(label)
+          params[field] = send(field)
+        end
+        params.merge!(
+          "instance_id" => instance_id,
+          "zone" => zone,
+          "machine_type" => machine_type,
+          "private_ip_address" => private_ip_address,
+          "public_ip_address" => public_ip_address,
+          "creation_timestamp" => creation_timestamp,
+          Config.status => send(Config.status),
+        )
+      end
+
+      # compatibility with dono-host
+      #
+      # If Service,Status,Tags labels are defined
+      #
+      #     OPTIONAL_STRING_LABELS=Service,Status
+      #     OPTIONAL_ARRAY_LABELS=Tags
+      #
+      # show in short format, otherwise, same with to_hash.to_s
+      def self.display_short_info?
+        return @display_short_info unless @display_short_info.nil?
+        @display_short_info = method_defined?(:service) and method_defined?(:status) and method_defined?(:tags)
+      end
+
+      def info
+        if self.class.display_short_info?
+          info = "#{hostname}:#{status}"
+          info << "(#{roles.join(' ')})" unless roles.empty?
+          info << "[#{tags.join(' ')}]" unless tags.empty?
+          info << "{#{service}}" unless service.empty?
+          info
+        else
+          to_hash.to_s
         end
       end
 
-      def set_array_tags
-        Config.optional_array_tags.each do |tag|
-          field = StringUtil.underscore(tag)
-          self[field] = find_array_tag(tag)
-        end
-      end
-
-      def find_string_tag(key)
-        v = instance.tags.find {|tag| tag.key == key }
-        v ? v.value : ''
-      end
-
-      def find_array_tag(key)
-        v = instance.tags.find {|tag| tag.key == key }
-        v ? v.value.split(Config.array_tag_delimiter) : []
+      def inspect
+        sprintf "#<GCE::Host::HostData %s>", info
       end
     end
   end

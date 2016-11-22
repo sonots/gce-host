@@ -12,9 +12,8 @@ shared_examples_for 'host' do
       :instance_id,
       :private_ip_address,
       :public_ip_address,
-      :launch_time,
-      :state,
-      :monitoring,
+      :creation_timestamp,
+      GCE::Host::Config.status.to_sym,
       :ip,
       :start_date,
       :usages,
@@ -39,19 +38,19 @@ describe GCE::Host do
     end
   end
 
-  describe '#get_value' do
-    let(:hosts) { GCE::Host.new(instance_id: 'i-85900780').to_a }
-    let(:subject)  { hosts.first }
-    it { expect(subject.get_value('instance.instance_id')).to eql('i-85900780') }
-  end
+  # describe '#get_value' do
+  #   let(:hosts) { GCE::Host.new(instance_id: 'i-85900780').to_a }
+  #   let(:subject)  { hosts.first }
+  #   it { expect(subject.get_value('instance.instance_id')).to eql('i-85900780') }
+  # end
 
-  context 'by instance_id' do
-    let(:hosts) { GCE::Host.new(instance_id: 'i-85900780').to_a }
-    let(:subject)  { hosts.first }
-    it_should_behave_like 'host'
-    it { expect(hosts.size).to eq(1) }
-    it { expect(subject.hostname).to eq('test') }
-  end
+  # context 'by instance_id' do
+  #   let(:hosts) { GCE::Host.new(instance_id: 'i-85900780').to_a }
+  #   let(:subject)  { hosts.first }
+  #   it_should_behave_like 'host'
+  #   it { expect(hosts.size).to eq(1) }
+  #   it { expect(subject.hostname).to eq('test') }
+  # end
 
   context 'by hostname' do
     let(:hosts) { GCE::Host.new(hostname: 'test').to_a }
@@ -159,14 +158,14 @@ describe GCE::Host do
     end
   end
 
-  context 'by region' do
-    context 'by a region' do
-      let(:subject) { GCE::Host.new(region: 'ap-northeast-1').first }
+  context 'by zone' do
+    context 'by a zone' do
+      let(:subject) { GCE::Host.new(zone: 'asia-northeast1-a').first }
       it_should_behave_like 'host'
     end
 
-    context 'by multiple regions (or)' do
-      let(:hosts) { GCE::Host.new(region: ['ap-northeast-1']) }
+    context 'by multiple zones (or)' do
+      let(:hosts) { GCE::Host.new(zone: ['asia-northeast1-a']) }
       let(:subject) { hosts.first }
       it_should_behave_like 'host'
     end

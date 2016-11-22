@@ -1,11 +1,13 @@
+require 'socket'
+
 class GCE
-  # Search GCE hosts from tags
+  # Search GCE hosts from labels
   #
   #     require 'gce-host'
-  #     # Search by `Name` tag
+  #     # Search by hostname
   #     GCE::Host.new(hostname: 'test').first # => test
   #
-  #     # Search by `Roles` tag
+  #     # Search by `roles` label
   #     GCE::Host.new(
   #       role: 'admin:haikanko',
   #     ).each do |host|
@@ -40,7 +42,7 @@ class GCE
 
     # @return [Host::Data] representing myself
     def self.me
-      new(instance_id: ClientUtil.instance_id).each do |d|
+      new(hostname: Socket.gethostname).each do |d|
         return d
       end
       raise 'Not Found'
@@ -51,6 +53,14 @@ class GCE
     # @params [Hash] params see GCE::Host::Config for configurable parameters
     def self.configure(params = {})
       Config.configure(params)
+    end
+
+    def self.gce_client
+      @gce_client ||= GCEClient.new
+    end
+
+    def gce_client
+      self.class.gce_client
     end
 
     attr_reader :conditions, :options
@@ -92,7 +102,7 @@ class GCE
     # @yieldparam [Host::Data] data entry
     def each(&block)
       @conditions.each do |condition|
-        search(ClientUtil.instances(condition), condition, &block)
+        search(gce_client.instances(condition), condition, &block)
       end
       return self
     end
@@ -101,7 +111,7 @@ class GCE
 
     def search(instances, condition)
       instances.each do |i|
-        d = GCE::Host::HostData.initialize(i)
+        d = GCE::Host::HostData.new(i)
         next unless d.match?(condition)
         yield d
       end

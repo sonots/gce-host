@@ -25,40 +25,37 @@ class GCE
           state: ["running"]
         }
 
-        op.on('--hostname one,two,three', Array, "name or private_dns_name") {|v|
+        op.on('--hostname one,two,three', Array, "name") {|v|
           opts[:hostname] = v
         }
         op.on('-r', '--role one,two,three', Array, "role") {|v|
           opts[:role] = v
         }
-        op.on('--r1', '--role1 one,two,three', Array, "role1, the 1st part of role delimited by #{Config.role_tag_delimiter}") {|v|
+        op.on('--r1', '--role1 one,two,three', Array, "role1, the 1st part of role delimited by #{Config.role_label_delimiter}") {|v|
           opts[:role1] = v
         }
-        op.on('--r2', '--role2 one,two,three', Array, "role2, the 2st part of role delimited by #{Config.role_tag_delimiter}") {|v|
+        op.on('--r2', '--role2 one,two,three', Array, "role2, the 2st part of role delimited by #{Config.role_label_delimiter}") {|v|
           opts[:role2] = v
         }
-        op.on('--r3', '--role3 one,two,three', Array, "role3, the 3st part of role delimited by #{Config.role_tag_delimiter}") {|v|
+        op.on('--r3', '--role3 one,two,three', Array, "role3, the 3st part of role delimited by #{Config.role_label_delimiter}") {|v|
           opts[:role3] = v
         }
         op.on('--instance-id one,two,three', Array, "instance_id") {|v|
           opts[:instance_id] = v
         }
-        op.on('--state one,two,three', Array, "filter with instance state (default: running)") {|v|
-          opts[:state] = v
+        op.on("--#{Config.status} one,two,three", Array, "filter with instance #{Config.status} (default: running)") {|v|
+          opts[Config.status.to_sym] = v
         }
-        op.on('--monitoring one,two,three', Array, "filter with instance monitoring") {|v|
-          opts[:monitoring] = v
-        }
-        Config.optional_options.each do |opt, tag|
+        Config.optional_options.keys.each do |opt|
           op.on("--#{opt.to_s.gsub('_', '-')} one,two,three", Array, opt) {|v|
             opts[opt.to_sym] = v
           }
         end
         op.on('-a', '--all', "list all hosts (remove default filter)") {|v|
-          [:hostname, :role, :role1, :role2, :role3, :instance_id, :state, :monitoring].each do |key|
+          [:hostname, :role, :role1, :role2, :role3, :instance_id, Config.status.to_sym].each do |key|
             opts.delete(key)
           end
-          Config.optional_options.each do |opt, tag|
+          Config.optional_options.keys.each do |opt|
             opts.delete(opt.to_sym)
           end
         }
@@ -136,8 +133,8 @@ class GCE
         _condition = HashUtil.except(options, :info, :jsonl, :json, :pretty_json, :debug, :private_ip, :public_ip)
         @condition = {}
         _condition.each do |key, val|
-          if tag = Config.optional_options[key.to_s]
-            field = StringUtil.underscore(tag)
+          if label = Config.optional_options[key.to_s]
+            field = StringUtil.underscore(label)
             @condition[field.to_sym] = val
           else
             @condition[key.to_sym] = val

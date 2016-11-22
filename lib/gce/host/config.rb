@@ -47,41 +47,43 @@ class GCE
         @open_timeout_sec ||= ENV['OPEN_TIMEOUT_SEC'] || config.fetch('OPEN_TIMEOUT_SEC', 300)
       end
 
-      def self.hostname_tag
-        @hostname_tag ||= ENV['HOSTNAME_TAG'] || config.fetch('HOSTNAME_TAG', 'Name')
+      def self.roles_label
+        @roles_label ||= ENV['ROLES_LABEL'] || config.fetch('ROLES_LABEL', 'roles')
       end
 
-      def self.roles_tag
-        @roles_tag ||= ENV['ROLES_TAG'] || config.fetch('ROLES_TAG', 'Roles')
+      def self.optional_array_labels
+        @optional_array_labels ||= (ENV['OPTIONAL_ARRAY_LABELS'] || config.fetch('OPTIONAL_ARRAY_LABELS', '')).split(',')
       end
 
-      def self.optional_array_tags
-        @optional_array_tags ||= (ENV['OPTIONAL_ARRAY_TAGS'] || config.fetch('OPTIONAL_ARRAY_TAGS', '')).split(',')
+      def self.optional_string_labels
+        @optional_string_labels ||= (ENV['OPTIONAL_STRING_LABELS'] || config.fetch('OPTIONAL_STRING_LABELS', '')).split(',')
       end
 
-      def self.optional_string_tags
-        @optional_string_tags ||= (ENV['OPTIONAL_STRING_TAGS'] || config.fetch('OPTIONAL_STRING_TAGS', '')).split(',')
+      def self.role_label_delimiter
+        @role_label_delimiter ||= ENV['ROLE_LABEL_DELIMITER'] || config.fetch('ROLE_LABEL_DELIMITER', ':')
       end
 
-      def self.role_tag_delimiter
-        @role_tag_delimiter ||= ENV['ROLE_TAG_DELIMITER'] || config.fetch('ROLE_TAG_DELIMITER', ':')
+      def self.array_label_delimiter
+        @array_label_delimiter ||= ENV['ARRAY_LABEL_DELIMITER'] || config.fetch('ARRAY_LABEL_DELIMITER', ',')
       end
 
-      def self.array_tag_delimiter
-        @array_tag_delimiter ||= ENV['ARRAY_TAG_DELIMITER'] || config.fetch('ARRAY_TAG_DELIMITER', ',')
+      # I wanted to make it be configurable to change status to state to make compatible with AWS
+      # usually, users do not need to care of this
+      def self.status
+        @status ||= ENV['STATUS'] || config.fetch('STATUS', 'status')
       end
 
       # private
 
       def self.optional_array_options
-        @optional_array_options ||= Hash[optional_array_tags.map {|tag|
-          [StringUtil.singularize(StringUtil.underscore(tag)), tag]
+        @optional_array_options ||= Hash[optional_array_labels.map {|label|
+          [StringUtil.singularize(StringUtil.underscore(label)), label]
         }]
       end
 
       def self.optional_string_options
-        @optional_string_options ||= Hash[optional_string_tags.map {|tag|
-          [StringUtil.underscore(tag), tag]
+        @optional_string_options ||= Hash[optional_string_labels.map {|label|
+          [StringUtil.underscore(label), label]
         }]
       end
 

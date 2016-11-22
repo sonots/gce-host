@@ -5,12 +5,15 @@ NOTE: Currently, mock is not supported yet. So, you have to create your own AWS 
 Configure .env file as
 
 ```
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_REGION=
-GCE_HOST_CONFIG_FILE=.env
-OPTIONAL_ARRAY_TAGS=Tags
-OPTIONAL_STRING_TAGS=Service,Status
+AUTH_METHOD=json_key
+JSON_KEYFILE=example/your-project-000.json
+ROLES_LABEL=roles
+ROLE_LABEL_DELIMITER=:
+OPTIONAL_STRING_LABELS=service,status
+OPTIONAL_ARRAY_LABELS=tags
+ARRAY_LABEL_DELIMITER=,
+LOG_LEVEL=info
+STATUS=state
 ```
 
 GCE instance tags must be configured as followings:
@@ -18,18 +21,18 @@ GCE instance tags must be configured as followings:
 ```
 [
   {
-    Name: test
-    Roles: admin:admin,test
-    Service: test
-    Status: reserve
-    Tags: standby
+    hostname: test
+    loles: admin:admin,test
+    service: test
+    status: reserve
+    tags: standby
   }
   {
-    Name: isucon4
-    Roles: isucon4:qual
-    Service: isucon4
-    Status: active
-    Tags: master
+    hostname: isucon4
+    roles: isucon4:qual
+    service: isucon4
+    status: active
+    tags: master
   }
 ]
 ```
