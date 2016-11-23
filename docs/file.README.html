@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.7.6
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!file.README.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'>
+<h1 id="label-gce-host">gce-host</h1>
+
+<p>Search hosts on GCP GCE</p>
+
+<h2 id="label-Installation">Installation</h2>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_gce'>gce</span><span class='op'>-</span><span class='id identifier rubyid_host'>host</span>
+</code></pre>
+
+<h2 id="label-How+it+works">How it works</h2>
+
+<p>This gems uses <a
+href="https://cloud.google.com/compute/docs/storing-retrieving-metadata">metadata
+of GCE resources</a>. You can configure, but basically use
+<code>roles</code> key for roles.</p>
+
+<p>You can manage roles of a host, and search hosts having a specified role
+using thease metadata with this gem.</p>
+
+<h2 id="label-Configuration">Configuration</h2>
+
+<p>You can write a configuration file located at
+<code>/etc/sysconfig/gce-host</code> (You can configure this path by
+<code>GCE_HOST_CONFIG_FILE</code> environment variable), or as environment
+variables:</p>
+
+<p>GOOGLE API parameters:</p>
+<ul><li>
+<p><strong>AUTH_METHOD</strong>: Authentication method. Currently,
+<code>compute_engine</code>, <code>json_key</code> and
+<code>application_default</code> is available. The default is
+<code>applilcation_default</code>.</p>
+</li><li>
+<p><strong>GOOGLE_CREDENTIAL_FILE</strong>: Path of credential file. Specify
+your service account json file for <code>json_key</code> authentication
+method.</p>
+</li></ul>
+
+<p>gce-host parameters:</p>
+<ul><li>
+<p><strong>ROLES_KEY (optional)</strong>: GCE metadata keys used to express
+roles. The default is <code>roles</code></p>
+</li><li>
+<p>You can assign multiple roles seperated by
+<code>ARRAY_VALUE_DELIMITER</code> (default: <code>,</code>)</p>
+</li><li>
+<p>Also, you can express levels of roles delimited by
+<code>ROLE_VALUE_DELIMITER</code> (default <code>:</code>)</p>
+</li><li>
+<p>Example: admin:ami, then <code>GCE::Host.new(role:
+&#39;admin:ami&#39;)</code> and also <code>GCE::Host.new(role1:
+&#39;admin&#39;)</code> returns this host</p>
+</li><li>
+<p><strong>ROLE_VALUE_DELIMITER (optional)</strong>: A delimiter to express
+levels of roles. Default is <code>:</code></p>
+</li><li>
+<p><strong>OPTIONAL_STRING_KEYS (optional)</strong>: You may add optional
+non-array metadata keys. You can specify multiple keys like
+<code>service,status</code>.</p>
+</li><li>
+<p><strong>OPTIONAL_ARRAY_KEYS (optional)</strong>: You may add optional array
+metadata keys. Array allows multiple values delimited by
+<code>ARRAY_VALUE_DELIMITER</code> (default: <code>,</code>)</p>
+</li><li>
+<p><strong>ARRAY_VALUE_DELIMITER (optional)</strong>: A delimiter to express
+array. Default is <code>,</code></p>
+</li><li>
+<p><strong>LOG_LEVEL (optional)</strong>: Log level such as <code>info</code>,
+<code>debug</code>, <code>error</code>. The default is <code>info</code>.</p>
+</li></ul>
+
+<p>See <a href="./example/example.conf">example.conf</a></p>
+
+<h2 id="label-Metadata+Example">Metadata Example</h2>
+<ul><li>
+<p><strong>roles</strong>: app:web,app:db</p>
+</li><li>
+<p><strong>service</strong>: awesome</p>
+</li><li>
+<p><strong>status</strong>: setup</p>
+</li></ul>
+
+<h2 id="label-CLI+Usage">CLI Usage</h2>
+
+<h3 id="label-CLI+Example">CLI Example</h3>
+
+<pre class="code ruby"><code class="ruby">$ gce-host -j
+{&quot;hostname&quot;:&quot;gce-host-db&quot;,&quot;roles&quot;:[&quot;foo&quot;,&quot;db:test&quot;],&quot;zone&quot;:&quot;asia-northeast1-a&quot;,&quot;service&quot;:&quot;gce-host&quot;,&quot;status&quot;:&quot;active&quot;,&quot;tags&quot;:[&quot;master&quot;],&quot;instance_id&quot;:&quot;4263858691219514807&quot;,&quot;private_ip_address&quot;:&quot;10.240.0.6&quot;,&quot;public_ip_address&quot;:&quot;104.198.89.55&quot;,&quot;creation_timestamp&quot;:&quot;2016-11-22T06:51:04.650-08:00&quot;,&quot;state&quot;:&quot;RUNNING&quot;}
+{&quot;hostname&quot;:&quot;gce-host-web&quot;,&quot;roles&quot;:[&quot;foo&quot;,&quot;web:test&quot;],&quot;zone&quot;:&quot;asia-northeast1-a&quot;,&quot;service&quot;:&quot;gce-host&quot;,&quot;status&quot;:&quot;reserve&quot;,&quot;tags&quot;:[&quot;standby&quot;],&quot;instance_id&quot;:&quot;8807276062743061943&quot;,&quot;private_ip_address&quot;:&quot;10.240.0.5&quot;,&quot;public_ip_address&quot;:&quot;104.198.87.6&quot;,&quot;creation_timestamp&quot;:&quot;2016-11-22T06:51:04.653-08:00&quot;,&quot;state&quot;:&quot;RUNNING&quot;}</code></pre>
+
+<pre class="code ruby"><code class="ruby">$ gce-host
+gce-host-db
+gce-host-web</code></pre>
+
+<pre class="code ruby"><code class="ruby">$ gce-host --role1 db
+gce-host-db</code></pre>
+
+<pre class="code ruby"><code class="ruby">$ gce-host --role web:test
+gce-host-web</code></pre>
+
+<pre class="code ruby"><code class="ruby">$ gce-host --pretty-json
+[
+  {
+    &quot;hostname&quot;: &quot;gce-host-db&quot;,
+    &quot;roles&quot;: [
+      &quot;foo&quot;,
+      &quot;db:test&quot;
+    ],
+    &quot;zone&quot;: &quot;asia-northeast1-a&quot;,
+    &quot;service&quot;: &quot;gce-host&quot;,
+    &quot;status&quot;: &quot;active&quot;,
+    &quot;tags&quot;: [
+      &quot;master&quot;
+    ],
+    &quot;instance_id&quot;: &quot;4263858691219514807&quot;,
+    &quot;private_ip_address&quot;: &quot;10.240.0.6&quot;,
+    &quot;public_ip_address&quot;: &quot;104.198.89.55&quot;,
+    &quot;creation_timestamp&quot;: &quot;2016-11-22T06:51:04.650-08:00&quot;,
+    &quot;state&quot;: &quot;RUNNING&quot;
+  },
+  {
+    &quot;hostname&quot;: &quot;gce-host-web&quot;,
+    &quot;roles&quot;: [
+      &quot;foo&quot;,
+      &quot;web:test&quot;
+    ],
+    &quot;zone&quot;: &quot;asia-northeast1-a&quot;,
+    &quot;service&quot;: &quot;gce-host&quot;,
+    &quot;status&quot;: &quot;reserve&quot;,
+    &quot;tags&quot;: [
+      &quot;standby&quot;
+    ],
+    &quot;instance_id&quot;: &quot;8807276062743061943&quot;,
+    &quot;private_ip_address&quot;: &quot;10.240.0.5&quot;,
+    &quot;public_ip_address&quot;: &quot;104.198.87.6&quot;,
+    &quot;creation_timestamp&quot;: &quot;2016-11-22T06:51:04.653-08:00&quot;,
+    &quot;state&quot;: &quot;RUNNING&quot;
+  }
+]</code></pre>
+
+<h3 id="label-CLI+Help">CLI Help</h3>
+
+<pre class="code ruby"><code class="ruby">$ bin/gce-host --help
+Usage: gce-host [options]
+        --hostname one,two,three     name or private_dns_name
+    -r, --role one,two,three         role
+        --r1, --role1 one,two,three  role1, the 1st part of role delimited by :
+        --r2, --role2 one,two,three  role2, the 2st part of role delimited by :
+        --r3, --role3 one,two,three  role3, the 3st part of role delimited by :
+        --state one,two,three        filter with instance state (default: running)
+    -a, --all                        list all hosts (remove default filter)
+        --private-ip, --ip           show private ip address instead of hostname
+        --public-ip                  show public ip address instead of hostname
+    -i, --info                       show host info
+    -j, --jsonl                      show host info in line delimited json
+        --json                       show host info in json
+        --pretty-json                show host info in pretty json
+        --debug                      debug mode
+    -h, --help                       show help</code></pre>
+
+<h2 id="label-Library+Usage">Library Usage</h2>
+
+<h3 id="label-Library+Example">Library Example</h3>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gce-host</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='id identifier rubyid_hosts'>hosts</span> <span class='op'>=</span> <span class='const'>GCE</span><span class='op'>::</span><span class='const'>Host</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>role:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db:test</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='id identifier rubyid_hosts'>hosts</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_host'>host</span><span class='op'>|</span>
+  <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_host'>host</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<h3 id="label-Library+Reference">Library Reference</h3>
+
+<p>See <a
+href="http://sonots.github.io/gce-host/frames.html">sonots.github.io/gce-host/frames.html</a>.</p>
+
+<h2 id="label-ChangeLog">ChangeLog</h2>
+
+<p>See <a href="CHANGELOG.md">CHANGELOG.md</a> for details.</p>
+
+<h2 id="label-For+Developers">For Developers</h2>
+
+<h3 id="label-ToDo">ToDo</h3>
+<ul><li>
+<p>Use mock/stub to run test (currently, directly accessing to GCE)</p>
+</li><li>
+<p>Should cache a result of list_instances in like 30 seconds?</p>
+</li></ul>
+
+<h3 id="label-How+to+Run+test">How to Run test</h3>
+
+<p>NOTE: Currently, mock is not supported yet. So, you have to create your own
+gcloud account, and instances.</p>
+
+<p>Configure .env file as</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'>AUTH_METHOD</span><span class='op'>=</span><span class='id identifier rubyid_json_key'>json_key</span>
+<span class='const'>GOOGLE_CREDENTIAL_FILE</span><span class='op'>=</span><span class='id identifier rubyid_service_acount'>service_acount</span><span class='period'>.</span><span class='id identifier rubyid_json'>json</span>
+<span class='const'>GOOGLE_PROJECT</span><span class='op'>=</span><span class='const'>XXXXXXXXXXXXX</span>
+<span class='const'>OPTIONAL_STRING_KEYS</span><span class='op'>=</span><span class='id identifier rubyid_service'>service</span><span class='comma'>,</span><span class='id identifier rubyid_status'>status</span>
+<span class='const'>OPTIONAL_ARRAY_KEYS</span><span class='op'>=</span><span class='id identifier rubyid_tags'>tags</span>
+</code></pre>
+
+<p>Install terraform and run to create instances for tests</p>
+
+<pre class="code ruby"><code class="ruby">$ brew install terraform
+$ env $(cat .env) terraform plan
+$ env ($cat .env) terraform apply</code></pre>
+
+<p>Run test</p>
+
+<pre class="code ruby"><code class="ruby">$ bundle exec rspec</code></pre>
+
+<p>After working, destory instances by commenting out
+<code>terraform.tf</code> and apply.</p>
+
+<h3 id="label-How+to+Release+Gem">How to Release Gem</h3>
+<ol><li>
+<p>Update gem.version in the gemspec</p>
+</li><li>
+<p>Update CHANGELOG.md</p>
+</li><li>
+<p>git commit &amp;&amp; git push</p>
+</li><li>
+<p>Run <code>bundle exec rake release</code></p>
+</li></ol>
+
+<h3 id="label-How+to+Update+doc">How to Update doc</h3>
+<ol><li>
+<p>Run <code>bundle exec yard</code></p>
+</li><li>
+<p>git commit &amp;&amp; git push</p>
+</li></ol>
+
+<h3 id="label-Licenses">Licenses</h3>
+
+<p>See <a href="LICENSE">LICENSE</a></p>
+</div></div>
+
+    <div id="footer">
+  Generated on Wed Nov 23 20:08:31 2016 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.6 (ruby-2.3.2).
+</div>
+
+  </body>
+</html>

@@ -39,16 +39,6 @@ class GCE
         end
       end
 
-      private def find_string_key(key)
-        item = instance.metadata.items.find {|item| item.key == key } if instance.metadata.items
-        item ? item.value : ''
-      end
-
-      private def find_array_key(key)
-        item = instance.metadata.items.find {|item| item.key == key } if instance.metadata.items
-        item ? item.value.split(Config.array_value_delimiter) : []
-      end
-
       define_method(Config.status) do
         instance.status
       end
@@ -127,48 +117,6 @@ class GCE
         true
       end
 
-      private def role_match?(condition)
-        # usage is an alias of role
-        if role = (condition[:role] || condition[:usage])
-          role1, role2, role3 = role.first.split(':')
-        else
-          role1 = (condition[:role1] || condition[:usage1] || []).first
-          role2 = (condition[:role2] || condition[:usage2] || []).first
-          role3 = (condition[:role3] || condition[:usage3] || []).first
-        end
-        if role1
-          return false unless roles.find {|role| role.match?(role1, role2, role3) }
-        end
-        true
-      end
-
-      private def status_match?(condition)
-        if values = condition[Config.status.to_sym]
-          return false unless values.map(&:downcase).include?(send(Config.status).downcase)
-        end
-        true
-      end
-
-      private def instance_match?(condition)
-        condition = HashUtil.except(condition, :role, :role1, :role2, :role3, :usage, :usage1, :usage2, :usage3, Config.status.to_sym)
-        condition.each do |key, values|
-          v = instance_variable_recursive_get(key)
-          if v.is_a?(Array)
-            return false unless v.find {|_| values.include?(_) }
-          else
-            return false unless values.include?(v)
-          end
-        end
-        true
-      end
-
-      # "instance.instance_id" => self.instance.instance_id
-      private def instance_variable_recursive_get(key)
-        v = self
-        key.to_s.split('.').each {|k| v = v.send(k) }
-        v
-      end
-
       def to_hash
         params = {
           "hostname" => hostname,
@@ -192,19 +140,6 @@ class GCE
         )
       end
 
-      # compatibility with dono-host
-      #
-      # If service,status,tags keys are defined
-      #
-      #     OPTIONAL_STRING_KEYS=service,status
-      #     OPTIONAL_ARRAY_KEYS=tags
-      #
-      # show in short format, otherwise, same with to_hash.to_s
-      def self.display_short_info?
-        return @display_short_info unless @display_short_info.nil?
-        @display_short_info = method_defined?(:service) and method_defined?(:status) and method_defined?(:tags)
-      end
-
       def info
         if self.class.display_short_info?
           info = "#{hostname}:#{status}"
@@ -219,6 +154,73 @@ class GCE
 
       def inspect
         sprintf "#<GCE::Host::HostData %s>", info
+      end
+
+      private
+
+      def find_string_key(key)
+        item = instance.metadata.items.find {|item| item.key == key } if instance.metadata.items
+        item ? item.value : ''
+      end
+
+      def find_array_key(key)
+        item = instance.metadata.items.find {|item| item.key == key } if instance.metadata.items
+        item ? item.value.split(Config.array_value_delimiter) : []
+      end
+
+      def role_match?(condition)
+        # usage is an alias of role
+        if role = (condition[:role] || condition[:usage])
+          role1, role2, role3 = role.first.split(':')
+        else
+          role1 = (condition[:role1] || condition[:usage1] || []).first
+          role2 = (condition[:role2] || condition[:usage2] || []).first
+          role3 = (condition[:role3] || condition[:usage3] || []).first
+        end
+        if role1
+          return false unless roles.find {|role| role.match?(role1, role2, role3) }
+        end
+        true
+      end
+
+      def status_match?(condition)
+        if values = condition[Config.status.to_sym]
+          return false unless values.map(&:downcase).include?(send(Config.status).downcase)
+        end
+        true
+      end
+
+      def instance_match?(condition)
+        condition = HashUtil.except(condition, :role, :role1, :role2, :role3, :usage, :usage1, :usage2, :usage3, Config.status.to_sym)
+        condition.each do |key, values|
+          v = instance_variable_recursive_get(key)
+          if v.is_a?(Array)
+            return false unless v.find {|_| values.include?(_) }
+          else
+            return false unless values.include?(v)
+          end
+        end
+        true
+      end
+
+      # "instance.instance_id" => self.instance.instance_id
+      def instance_variable_recursive_get(key)
+        v = self
+        key.to_s.split('.').each {|k| v = v.send(k) }
+        v
+      end
+
+      # compatibility with dono-host
+      #
+      # If service,status,tags keys are defined
+      #
+      #     OPTIONAL_STRING_KEYS=service,status
+      #     OPTIONAL_ARRAY_KEYS=tags
+      #
+      # show in short format, otherwise, same with to_hash.to_s
+      def self.display_short_info?
+        return @display_short_info unless @display_short_info.nil?
+        @display_short_info = method_defined?(:service) and method_defined?(:status) and method_defined?(:tags)
       end
     end
   end

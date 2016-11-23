@@ -50,7 +50,7 @@ class GCE
 
     # Configure GCE::Host
     #
-    # @params [Hash] params see GCE::Host::Config for configurable parameters
+    # @param [Hash] params see GCE::Host::Config for configurable parameters
     def self.configure(params = {})
       Config.configure(params)
     end
