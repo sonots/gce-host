@@ -1,24 +1,26 @@
 require 'spec_helper'
 
 shared_examples_for 'host' do
-  it 'should have parameters' do
+  it 'should respond_to' do
     [ :hostname,
       :roles,
+      :zone,
+      GCE::Host::Config.status.to_sym,
+      :service,
       :status,
       :tags,
-      :service,
-      :region,
       :instance,
       :instance_id,
       :private_ip_address,
+      :private_ip_addresses,
       :public_ip_address,
+      :public_ip_addresses,
       :creation_timestamp,
-      GCE::Host::Config.status.to_sym,
       :ip,
       :start_date,
       :usages,
     ].each do |k|
-      expect{ subject.__send__(k) }.not_to raise_error
+      expect(subject.respond_to?(k)).to be_truthy
     end
   end
 end
@@ -26,48 +28,70 @@ end
 describe GCE::Host do
   describe 'options' do
     context do
-      let(:subject) { GCE::Host.new(hostname: 'test', options: {foo:'bar'}) }
+      let(:subject) { GCE::Host.new(hostname: 'gce-host-web', options: {foo:'bar'}) }
       it { expect(subject.options).to eq({foo:'bar'}) }
-      it { expect(subject.conditions).to eq([{hostname: ['test']}]) }
+      it { expect(subject.conditions).to eq([{hostname: ['gce-host-web']}]) }
     end
 
     context do
-      let(:subject) { GCE::Host.new({hostname: 'foo'}, {hostname: 'bar'}, options: {foo:'bar'}) }
+      let(:subject) { GCE::Host.new({hostname: 'gce-host-web'}, {hostname: 'gce-host-db'}, options: {foo:'bar'}) }
       it { expect(subject.options).to eq({foo:'bar'}) }
-      it { expect(subject.conditions).to eq([{hostname: ['foo']}, {hostname: ['bar']}]) }
+      it { expect(subject.conditions).to eq([{hostname: ['gce-host-web']}, {hostname: ['gce-host-db']}]) }
     end
   end
 
-  # describe '#get_value' do
-  #   let(:hosts) { GCE::Host.new(instance_id: 'i-85900780').to_a }
-  #   let(:subject)  { hosts.first }
-  #   it { expect(subject.get_value('instance.instance_id')).to eql('i-85900780') }
-  # end
+  context '#to_hash' do
+    let(:subject) { GCE::Host.new(service: 'gce-host').first.to_hash }
 
-  # context 'by instance_id' do
-  #   let(:hosts) { GCE::Host.new(instance_id: 'i-85900780').to_a }
-  #   let(:subject)  { hosts.first }
-  #   it_should_behave_like 'host'
-  #   it { expect(hosts.size).to eq(1) }
-  #   it { expect(subject.hostname).to eq('test') }
-  # end
+    it 'keys' do
+      expect(subject.keys).to eq([
+        'hostname',
+        'roles',
+        'zone',
+        'service',
+        'status',
+        'tags',
+        'instance_id',
+        'private_ip_address',
+        'public_ip_address',
+        'creation_timestamp',
+        GCE::Host::Config.status,
+      ])
+    end
+
+    it 'values are not empty' do
+      expect(subject.values.any? {|v| v.nil? or (v.respond_to?(:empty?) and v.empty?) }).to be_falsey
+    end
+  end
 
   context 'by hostname' do
-    let(:hosts) { GCE::Host.new(hostname: 'test').to_a }
+    let(:hosts) { GCE::Host.new(hostname: 'gce-host-web').to_a }
     let(:subject)  { hosts.first }
     it_should_behave_like 'host'
     it { expect(hosts.size).to eq(1) }
-    it { expect(subject.hostname).to eq('test') }
+    it { expect(subject.hostname).to eq('gce-host-web') }
+  end
+
+  context 'by instance_id' do
+    let(:instance_id) { GCE::Host.new(service: 'gce-host').first.instance_id }
+
+    context 'by instance_id' do
+      let(:hosts)   { GCE::Host.new(instance_id: instance_id).to_a }
+      let(:subject) { hosts.first }
+      it_should_behave_like 'host'
+      it { expect(hosts.size).to eq(1) }
+      it { expect(subject.instance_id).to eq(instance_id) }
+    end
   end
 
   context 'by role' do
     context 'by a role' do
-      let(:subject) { GCE::Host.new(role: 'admin:ami').first }
+      let(:subject) { GCE::Host.new(role: 'web:test').first }
       it_should_behave_like 'host'
     end
 
     context 'by a role1' do
-      let(:subject) { GCE::Host.new(role1: 'admin').first }
+      let(:subject) { GCE::Host.new(role1: 'web').first }
       it_should_behave_like 'host'
     end
 
@@ -75,12 +99,13 @@ describe GCE::Host do
       let(:hosts) {
         GCE::Host.new(
           {
-            role1: 'admin',
-            role2: 'ami',
+            role1: 'web',
+            role2: 'test',
           },
           {
-            role1: 'isucon4',
-          }
+            role1: 'db',
+            role2: 'test',
+          },
         ).to_a
       }
       let(:subject) { hosts.first }
@@ -89,15 +114,15 @@ describe GCE::Host do
     end
   end
 
-  # This is for DeNA use
-  context 'by usage (an alias of usage)' do
+  # for compatibility with dino-host
+  context 'by usage' do
     context 'by a usage' do
-      let(:subject) { GCE::Host.new(usage: 'admin:ami').first }
+      let(:subject) { GCE::Host.new(usage: 'web:test').first }
       it_should_behave_like 'host'
     end
 
     context 'by a usage1' do
-      let(:subject) { GCE::Host.new(usage1: 'admin').first }
+      let(:subject) { GCE::Host.new(usage1: 'web').first }
       it_should_behave_like 'host'
     end
 
@@ -105,12 +130,13 @@ describe GCE::Host do
       let(:hosts) {
         GCE::Host.new(
           {
-            usage1: 'admin',
-            usage2: 'ami',
+            usage1: 'web',
+            usage2: 'test',
           },
           {
-            usage1: 'isucon4',
-          }
+            usage1: 'db',
+            usage2: 'test',
+          },
         ).to_a
       }
       let(:subject) { hosts.first }
@@ -119,7 +145,7 @@ describe GCE::Host do
     end
   end
 
-  context 'by status' do
+  context 'by status (optional array tags)' do
     context 'by a status' do
       let(:subject) { GCE::Host.new(status: :active).first }
       it_should_behave_like 'host'
@@ -145,33 +171,20 @@ describe GCE::Host do
     end
   end
 
-  context 'by service' do
+  context 'by service (optional string tags)' do
     context 'by a service' do
-      let(:subject) { GCE::Host.new(service: 'isucon4').first }
+      let(:subject) { GCE::Host.new(service: 'gce-host').first }
       it_should_behave_like 'host'
     end
 
     context 'by multiple services (or)' do
-      let(:hosts) { GCE::Host.new(service: ['test', 'isucon4']) }
+      let(:hosts) { GCE::Host.new(service: ['test', 'gce-host']) }
       let(:subject) { hosts.first }
       it_should_behave_like 'host'
     end
   end
 
-  context 'by zone' do
-    context 'by a zone' do
-      let(:subject) { GCE::Host.new(zone: 'asia-northeast1-a').first }
-      it_should_behave_like 'host'
-    end
-
-    context 'by multiple zones (or)' do
-      let(:hosts) { GCE::Host.new(zone: ['asia-northeast1-a']) }
-      let(:subject) { hosts.first }
-      it_should_behave_like 'host'
-    end
-  end
-
-  context 'by tags' do
+  context 'by tags (optional array tags)' do
     context 'by a tag' do
       let(:subject) { GCE::Host.new(tags: 'master').first }
       it_should_behave_like 'host'

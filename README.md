@@ -1,6 +1,6 @@
 # gce-host
 
-Search hosts on AWS GCE
+Search hosts on GCP GCE
 
 ## Installation
 
@@ -10,44 +10,39 @@ gem install gce-host
 
 ## How it works
 
-This gems uses [tagging of GCE resources](http://docs.aws.amazon.com/AWSGCE/latest/UserGuide/Using_Tags.html).
-You can configure, but basically use `Name` tag for hostname (this is default of GCE) and `Roles` tag for roles.
+This gems uses [metadata of GCE resources](https://cloud.google.com/compute/docs/storing-retrieving-metadata).
+You can configure, but basically use `roles` key for roles.
 
-You can manage roles of a host, and search hosts having a specified role using thease tags with this gem.
+You can manage roles of a host, and search hosts having a specified role using thease metadata with this gem.
 
 ## Configuration
 
 You can write a configuration file located at `/etc/sysconfig/gce-host` (You can configure this path by `GCE_HOST_CONFIG_FILE` environment variable), or as environment variables:
 
-AWS SDK (CLI) parameters:
+GOOGLE API parameters:
 
-* **AWS_REGION**; AWS SDK (CLI) region such as `ap-northeast-1`, `us-east-1`. 
-* **AWS_ACCESS_KEY_ID**: AWS SDK (CLI) crendentials. Default loads a credentials file
-* **AWS_SECRET_ACCESS_KEY**: AWS SDK (CLI) credentials. Default load a credentials file
-* **AWS_PROFILE**: The profile key of the AWS SDK (CLI) credentails file. Default is `default`
-* **AWS_CREDENTIALS_FILE**: Path of the AWS SDK (CLI) credentails file. Default is `$HOME/.aws/credentials`. See [Configuring the AWS Command Line Interface](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-config-files) for details. 
+* **AUTH_METHOD**: Authentication method. Currently, `compute_engine`, `json_key` and `application_default` is available. The default is `applilcation_default`. 
+* **GOOGLE_CREDENTIAL_FILE**: Path of credential file. Specify your service account json file for `json_key` authentication method.
 
 gce-host parameters:
 
-* **HOSTNAME_TAG (optional)**: GCE tag key used to express a hostname. The default is `Name`.
-* **ROLES_TAG (optional)**: GCE tag keys used to express roles. The default is `Roles`
-  * You can assign multiple roles seperated by `ARRAY_TAG_DELIMITER` (default: `,`)
-  * Also, you can express levels of roles delimited by `ROLE_TAG_DELIMITER` (default `:`)
+* **ROLES_KEY (optional)**: GCE metadata keys used to express roles. The default is `roles`
+  * You can assign multiple roles seperated by `ARRAY_VALUE_DELIMITER` (default: `,`)
+  * Also, you can express levels of roles delimited by `ROLE_VALUE_DELIMITER` (default `:`)
   * Example: admin:ami, then `GCE::Host.new(role: 'admin:ami')` and also `GCE::Host.new(role1: 'admin')` returns this host
-* **ROLE_TAG_DELIMITER (optional)**: A delimiter to express levels of roles. Default is `:`
-* **OPTIONAL_STRING_TAGS (optional)**: You may add optional non-array tags. You can specify multiple tags like `Service,Status`. 
-* **OPTIONAL_ARRAY_TAGS (optional)**: You may add optional array tags. Array tags allows multiple values delimited by `ARRAY_TAG_DELIMITER` (default: `,`)
-* **ARRAY_TAG_DELIMITER (optional)**: A delimiter to express array. Default is `,`
+* **ROLE_VALUE_DELIMITER (optional)**: A delimiter to express levels of roles. Default is `:`
+* **OPTIONAL_STRING_KEYS (optional)**: You may add optional non-array metadata keys. You can specify multiple keys like `service,status`. 
+* **OPTIONAL_ARRAY_KEYS (optional)**: You may add optional array metadata keys. Array allows multiple values delimited by `ARRAY_VALUE_DELIMITER` (default: `,`)
+* **ARRAY_VALUE_DELIMITER (optional)**: A delimiter to express array. Default is `,`
 * **LOG_LEVEL (optional)**: Log level such as `info`, `debug`, `error`. The default is `info`. 
 
 See [example.conf](./example/example.conf)
 
-## Tag Example
+## Metadata Example
 
-* **Name**: hostname
-* **Roles**: app:web,app:db
-* **Service**: sugoi
-* **Status**: setup
+* **roles**: app:web,app:db
+* **service**: awesome
+* **status**: setup
 
 ## CLI Usage
 
@@ -55,55 +50,64 @@ See [example.conf](./example/example.conf)
 
 ```
 $ gce-host -j
-{"hostname":"test","roles":["admin:ami","test"],"region":"ap-northeast-1","instance_id":"i-85900780","private_ip_address":"172.31.23.50","public_ip_address":null,"launch_time":"2013-09-16 06:14:20 UTC","state":"running","monitoring":"disabled"}
-{"hostname":"ip-172-31-6-194","roles":["isucon4:qual"],"region":"ap-northeast-1","instance_id":"i-f88cc8e1","private_ip_address":"172.31.6.194","public_ip_address":null,"launch_time":"2014-10-20 15:57:23 UTC","state":"running","monitoring":"disabled"}
+{"hostname":"gce-host-db","roles":["foo","db:test"],"zone":"asia-northeast1-a","service":"gce-host","status":"active","tags":["master"],"instance_id":"4263858691219514807","private_ip_address":"10.240.0.6","public_ip_address":"104.198.89.55","creation_timestamp":"2016-11-22T06:51:04.650-08:00","state":"RUNNING"}
+{"hostname":"gce-host-web","roles":["foo","web:test"],"zone":"asia-northeast1-a","service":"gce-host","status":"reserve","tags":["standby"],"instance_id":"8807276062743061943","private_ip_address":"10.240.0.5","public_ip_address":"104.198.87.6","creation_timestamp":"2016-11-22T06:51:04.653-08:00","state":"RUNNING"}
 ```
 
 ```
 $ gce-host
-test
-ip-172-31-6-194 # if Name tag is not available
+gce-host-db
+gce-host-web
 ```
 
 ```
-$ gce-host --role1 admin
-test
+$ gce-host --role1 db
+gce-host-db
 ```
 
 ```
-$ gce-host --role admin:ami
-test
+$ gce-host --role web:test
+gce-host-web
 ```
 
 ```
 $ gce-host --pretty-json
 [
   {
-    "hostname": "test",
+    "hostname": "gce-host-db",
     "roles": [
-      "admin:ami",
-      "test"
+      "foo",
+      "db:test"
     ],
-    "region": "ap-northeast-1",
-    "instance_id": "i-85900780",
-    "private_ip_address": "172.31.23.50",
-    "public_ip_address": null,
-    "launch_time": "2013-09-16 06:14:20 UTC",
-    "state": "running",
-    "monitoring": "disabled"
+    "zone": "asia-northeast1-a",
+    "service": "gce-host",
+    "status": "active",
+    "tags": [
+      "master"
+    ],
+    "instance_id": "4263858691219514807",
+    "private_ip_address": "10.240.0.6",
+    "public_ip_address": "104.198.89.55",
+    "creation_timestamp": "2016-11-22T06:51:04.650-08:00",
+    "state": "RUNNING"
   },
   {
-    "hostname": "ip-172-31-6-194",
+    "hostname": "gce-host-web",
     "roles": [
-      "isucon4:qual"
+      "foo",
+      "web:test"
     ],
-    "region": "ap-northeast-1",
-    "instance_id": "i-f88cc8e1",
-    "private_ip_address": "172.31.6.194",
-    "public_ip_address": null,
-    "launch_time": "2014-10-20 15:57:23 UTC",
-    "state": "running",
-    "monitoring": "disabled"
+    "zone": "asia-northeast1-a",
+    "service": "gce-host",
+    "status": "reserve",
+    "tags": [
+      "standby"
+    ],
+    "instance_id": "8807276062743061943",
+    "private_ip_address": "10.240.0.5",
+    "public_ip_address": "104.198.87.6",
+    "creation_timestamp": "2016-11-22T06:51:04.653-08:00",
+    "state": "RUNNING"
   }
 ]
 ```
@@ -118,9 +122,7 @@ Usage: gce-host [options]
         --r1, --role1 one,two,three  role1, the 1st part of role delimited by :
         --r2, --role2 one,two,three  role2, the 2st part of role delimited by :
         --r3, --role3 one,two,three  role3, the 3st part of role delimited by :
-        --instance-id one,two,three  instance_id
         --state one,two,three        filter with instance state (default: running)
-        --monitoring one,two,three   filter with instance monitoring
     -a, --all                        list all hosts (remove default filter)
         --private-ip, --ip           show private ip address instead of hostname
         --public-ip                  show public ip address instead of hostname
@@ -139,7 +141,7 @@ Usage: gce-host [options]
 ```ruby
 require 'gce-host'
 
-hosts = GCE::Host.new(role: 'admin:ami')
+hosts = GCE::Host.new(role: 'db:test')
 hosts.each do |host|
   puts host
 end
@@ -157,13 +159,38 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ### ToDo
 
-* Support assume-roles
 * Use mock/stub to run test (currently, directly accessing to GCE)
-* Should cache a result of describe-instances in like 30 seconds?
+* Should cache a result of list_instances in like 30 seconds?
 
 ### How to Run test
 
-See [spec/README.md](spec/README.md)
+NOTE: Currently, mock is not supported yet. So, you have to create your own gcloud account, and instances.
+
+Configure .env file as
+
+```
+AUTH_METHOD=json_key
+GOOGLE_CREDENTIAL_FILE=service_acount.json
+GOOGLE_PROJECT=XXXXXXXXXXXXX
+OPTIONAL_STRING_KEYS=service,status
+OPTIONAL_ARRAY_KEYS=tags
+```
+
+Install terraform and run to create instances for tests
+
+```
+$ brew install terraform
+$ env $(cat .env) terraform plan
+$ env ($cat .env) terraform apply
+```
+
+Run test
+
+```
+$ bundle exec rspec
+```
+
+After working, destory instances by commenting out `terraform.tf` and apply.
 
 ### How to Release Gem
 

@@ -14,21 +14,22 @@ class GCE
         @config_file ||= ENV.fetch('GCE_HOST_CONFIG_FILE', '/etc/sysconfig/gce-host')
       end
 
-      def self.project_id
-        return @project_id if @project_id
-        @project_id ||= ENV['PROJECT_ID'] || config.fetch('PROJECT_ID', nil)
-        if @project_id.nil? and json_keyfile and File.readable?(json_keyfile)
-          @project_id ||= (JSON.parse(File.read(json_keyfile)) || {})['project_id']
-        end
-        @project_id
-      end
-
       def self.auth_method
         @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', 'application_default')
       end
 
-      def self.json_keyfile
-        @json_keyfile ||= ENV['JSON_KEYFILE'] || config.fetch('JSON_KEYFILE', nil)
+      def self.credential_file
+        @credential_file ||= ENV['GOOGLE_CREDENTIAL_FILE'] || config.fetch('GOOGLE_CREDENTIAL_FILE', nil)
+      end
+
+      def self.project
+        return @project if @project
+        # ref. terraform https://www.terraform.io/docs/providers/google/
+        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil)
+        if @project.nil? and credential_file and File.readable?(credential_file)
+          @project ||= (JSON.parse(File.read(credential_file)) || {})['project_id']
+        end
+        @project
       end
 
       def self.log_level
@@ -47,27 +48,27 @@ class GCE
         @open_timeout_sec ||= ENV['OPEN_TIMEOUT_SEC'] || config.fetch('OPEN_TIMEOUT_SEC', 300)
       end
 
-      def self.roles_label
-        @roles_label ||= ENV['ROLES_LABEL'] || config.fetch('ROLES_LABEL', 'roles')
+      def self.roles_key
+        @roles_key ||= ENV['ROLES_KEY'] || config.fetch('ROLES_KEY', 'roles')
       end
 
-      def self.optional_array_labels
-        @optional_array_labels ||= (ENV['OPTIONAL_ARRAY_LABELS'] || config.fetch('OPTIONAL_ARRAY_LABELS', '')).split(',')
+      def self.optional_array_keys
+        @optional_array_keys ||= (ENV['OPTIONAL_ARRAY_KEYS'] || config.fetch('OPTIONAL_ARRAY_KEYS', '')).split(',')
       end
 
-      def self.optional_string_labels
-        @optional_string_labels ||= (ENV['OPTIONAL_STRING_LABELS'] || config.fetch('OPTIONAL_STRING_LABELS', '')).split(',')
+      def self.optional_string_keys
+        @optional_string_keys ||= (ENV['OPTIONAL_STRING_KEYS'] || config.fetch('OPTIONAL_STRING_KEYS', '')).split(',')
       end
 
-      def self.role_label_delimiter
-        @role_label_delimiter ||= ENV['ROLE_LABEL_DELIMITER'] || config.fetch('ROLE_LABEL_DELIMITER', ':')
+      def self.role_value_delimiter
+        @role_value_delimiter ||= ENV['ROLE_VALUE_DELIMITER'] || config.fetch('ROLE_VALUE_DELIMITER', ':')
       end
 
-      def self.array_label_delimiter
-        @array_label_delimiter ||= ENV['ARRAY_LABEL_DELIMITER'] || config.fetch('ARRAY_LABEL_DELIMITER', ',')
+      def self.array_value_delimiter
+        @array_value_delimiter ||= ENV['ARRAY_VALUE_DELIMITER'] || config.fetch('ARRAY_VALUE_DELIMITER', ',')
       end
 
-      # I wanted to make it be configurable to change status to state to make compatible with AWS
+      # this makes configurable to change status to state to make compatible with AWS
       # usually, users do not need to care of this
       def self.status
         @status ||= ENV['STATUS'] || config.fetch('STATUS', 'status')
@@ -76,14 +77,14 @@ class GCE
       # private
 
       def self.optional_array_options
-        @optional_array_options ||= Hash[optional_array_labels.map {|label|
-          [StringUtil.singularize(StringUtil.underscore(label)), label]
+        @optional_array_options ||= Hash[optional_array_keys.map {|key|
+          [StringUtil.singularize(StringUtil.underscore(key)), key]
         }]
       end
 
       def self.optional_string_options
-        @optional_string_options ||= Hash[optional_string_labels.map {|label|
-          [StringUtil.underscore(label), label]
+        @optional_string_options ||= Hash[optional_string_keys.map {|key|
+          [StringUtil.underscore(key), key]
         }]
       end
 

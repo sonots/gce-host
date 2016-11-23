@@ -31,13 +31,13 @@ class GCE
         op.on('-r', '--role one,two,three', Array, "role") {|v|
           opts[:role] = v
         }
-        op.on('--r1', '--role1 one,two,three', Array, "role1, the 1st part of role delimited by #{Config.role_label_delimiter}") {|v|
+        op.on('--r1', '--role1 one,two,three', Array, "role1, the 1st part of role delimited by #{Config.role_value_delimiter}") {|v|
           opts[:role1] = v
         }
-        op.on('--r2', '--role2 one,two,three', Array, "role2, the 2st part of role delimited by #{Config.role_label_delimiter}") {|v|
+        op.on('--r2', '--role2 one,two,three', Array, "role2, the 2st part of role delimited by #{Config.role_value_delimiter}") {|v|
           opts[:role2] = v
         }
-        op.on('--r3', '--role3 one,two,three', Array, "role3, the 3st part of role delimited by #{Config.role_label_delimiter}") {|v|
+        op.on('--r3', '--role3 one,two,three', Array, "role3, the 3st part of role delimited by #{Config.role_value_delimiter}") {|v|
           opts[:role3] = v
         }
         op.on('--instance-id one,two,three', Array, "instance_id") {|v|

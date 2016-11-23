@@ -1,19 +1,23 @@
 class GCE
   class Host
-    RoleData = Struct.new(
-      :role1, :role2, :role3
-    )
-
     # Represents each role
     class RoleData
-      def self.initialize(role)
-        role1, role2, role3 = role.split(Config.role_label_delimiter)
-        self.new(role1, role2, role3)
+      attr_reader :role1, :role2, :role3
+
+      def initialize(role1, role2 = nil, role3 = nil)
+        @role1 = role1
+        @role2 = role2
+        @role3 = role3
+      end
+
+      def self.build(role)
+        role1, role2, role3 = role.split(Config.role_value_delimiter, 3)
+        new(role1, role2, role3)
       end
 
       # @return [String] something like "admin:jenkins:slave"
       def role
-        @role ||= [role1, role2, role3].compact.reject(&:empty?).join(Config.role_label_delimiter)
+        @role ||= [role1, role2, role3].compact.reject(&:empty?).join(Config.role_value_delimiter)
       end
       alias :to_s :role
 

@@ -15,4 +15,6 @@ vendor
 *.swp
 pkg/
 .env
-example/your-project-000.json
+*.json
+*.tfstate
+*.tfstate.backup

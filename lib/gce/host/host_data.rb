@@ -7,61 +7,58 @@ class GCE
       attr_reader :instance
 
       # :hostname, # hostname
-      # :roles,    # labels.role.split(',') such as web:app1,db:app1
+      # :roles,    # roles.split(',') such as web:app1,db:app1
       # :instance, # Aws::GCE::Types::Instance itself
       #
-      # and OPTIONAL_ARRAY_LABELS, OPTIONAL_STRING_LABELS
+      # and OPTIONAL_ARRAY_KEYS, OPTIONAL_STRING_KEYS
       def initialize(instance)
         @instance = instance
-      end
-
-      def roles
-        return @roles if @roles
-        roles = find_array_label(Config.roles_label)
-        @roles = roles.map {|role| GCE::Host::RoleData.initialize(role) }
-      end
-
-      Config.optional_string_labels.each do |label|
-        field = StringUtil.underscore(label)
-        define_method(field) do
-          instance_variable_get("@#{field}") || instance_variable_set("@#{field}", find_string_label(label))
-        end
-      end
-
-      Config.optional_array_labels.each do |label|
-        field = StringUtil.underscore(label)
-        define_method(field) do
-          instance_variable_get("@#{field}") || instance_variable_set("@#{field}", find_array_label(label))
-        end
-      end
-
-      private def find_string_label(key)
-        (instance.labels || {})[key] || ''
-      end
-
-      private def find_array_label(key)
-        v = (instance.labels || {})[key]
-        v ? v.split(Config.array_label_delimiter) : []
       end
 
       def hostname
         instance.name
       end
 
-      def instance_id
-        instance.id
+      def roles
+        return @roles if @roles
+        roles = find_array_key(Config.roles_key)
+        @roles = roles.map {|role| GCE::Host::RoleData.build(role) }
+      end
+
+      Config.optional_string_keys.each do |key|
+        field = StringUtil.underscore(key)
+        define_method(field) do
+          instance_variable_get("@#{field}") || instance_variable_set("@#{field}", find_string_key(key))
+        end
+      end
+
+      Config.optional_array_keys.each do |key|
+        field = StringUtil.underscore(key)
+        define_method(field) do
+          instance_variable_get("@#{field}") || instance_variable_set("@#{field}", find_array_key(key))
+        end
+      end
+
+      private def find_string_key(key)
+        item = instance.metadata.items.find {|item| item.key == key } if instance.metadata.items
+        item ? item.value : ''
+      end
+
+      private def find_array_key(key)
+        item = instance.metadata.items.find {|item| item.key == key } if instance.metadata.items
+        item ? item.value.split(Config.array_value_delimiter) : []
       end
 
       define_method(Config.status) do
         instance.status
       end
 
-      def zone
-        instance.zone.split('/').last
+      def instance_id
+        instance.id
       end
 
-      def machine_type
-        instance.machine_type.split('/').last
+      def zone
+        instance.zone.split('/').last
       end
 
       def private_ip_address
@@ -176,19 +173,18 @@ class GCE
         params = {
           "hostname" => hostname,
           "roles" => roles,
+          "zone" => zone,
         }
-        Config.optional_string_labels.each do |label|
-          field = StringUtil.underscore(label)
+        Config.optional_string_keys.each do |key|
+          field = StringUtil.underscore(key)
           params[field] = send(field)
         end
-        Config.optional_array_labels.each do |label|
-          field = StringUtil.underscore(label)
+        Config.optional_array_keys.each do |key|
+          field = StringUtil.underscore(key)
           params[field] = send(field)
         end
         params.merge!(
           "instance_id" => instance_id,
-          "zone" => zone,
-          "machine_type" => machine_type,
           "private_ip_address" => private_ip_address,
           "public_ip_address" => public_ip_address,
           "creation_timestamp" => creation_timestamp,
@@ -198,10 +194,10 @@ class GCE
 
       # compatibility with dono-host
       #
-      # If Service,Status,Tags labels are defined
+      # If service,status,tags keys are defined
       #
-      #     OPTIONAL_STRING_LABELS=Service,Status
-      #     OPTIONAL_ARRAY_LABELS=Tags
+      #     OPTIONAL_STRING_KEYS=service,status
+      #     OPTIONAL_ARRAY_KEYS=tags
       #
       # show in short format, otherwise, same with to_hash.to_s
       def self.display_short_info?
@@ -212,8 +208,8 @@ class GCE
       def info
         if self.class.display_short_info?
           info = "#{hostname}:#{status}"
-          info << "(#{roles.join(' ')})" unless roles.empty?
-          info << "[#{tags.join(' ')}]" unless tags.empty?
+          info << "(#{roles.join(',')})" unless roles.empty?
+          info << "[#{tags.join(',')}]" unless tags.empty?
           info << "{#{service}}" unless service.empty?
           info
         else
