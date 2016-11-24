@@ -11,7 +11,7 @@ class GCE
       end
 
       def self.config_file
-        @config_file ||= ENV.fetch('GCE_HOST_CONFIG_FILE', '/etc/sysconfig/gce-host')
+        @config_file ||= ENV.fetch('GCE_HOST_CONFIG_FILE', '/etc/sysconfig/gce-host').gsub('$HOME', Dir.home)
       end
 
       def self.auth_method
@@ -19,7 +19,7 @@ class GCE
       end
 
       def self.credential_file
-        @credential_file ||= ENV['GOOGLE_CREDENTIAL_FILE'] || config.fetch('GOOGLE_CREDENTIAL_FILE', nil)
+        @credential_file ||= (ENV['GOOGLE_CREDENTIAL_FILE'] || config.fetch('GOOGLE_CREDENTIAL_FILE')).gsub('$HOME', Dir.home)
       end
 
       def self.project
