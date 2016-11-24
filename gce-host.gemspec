@@ -1,6 +1,8 @@
+require_relative 'lib/gce/host/version'
+
 Gem::Specification.new do |gem|
   gem.name          = "gce-host"
-  gem.version       = '0.1.0'
+  gem.version       = GCE::Host::VERSION
   gem.author        = ['Naotoshi Seo']
   gem.email         = ['sonots@gmail.com']
   gem.homepage      = 'https://github.com/sonots/gce-host'
