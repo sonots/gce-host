@@ -125,8 +125,6 @@ class GCE
         params = {
           "hostname" => hostname,
           "roles" => roles,
-          "zone" => zone,
-          "machine_type" => machine_type,
         }
         Config.optional_string_keys.each do |key|
           field = StringUtil.underscore(key)
@@ -137,7 +135,8 @@ class GCE
           params[field] = send(field)
         end
         params.merge!(
-          "instance_id" => instance_id,
+          "zone" => zone,
+          "machine_type" => machine_type,
           "private_ip_address" => private_ip_address,
           "public_ip_address" => public_ip_address,
           "creation_timestamp" => creation_timestamp,
