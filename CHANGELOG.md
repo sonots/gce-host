@@ -1,3 +1,10 @@
+# 0.1.1 (2016/11/24)
+
+Enhancements:
+
+* Add machine_type to show
+
 # 0.1.0 (2016/11/18)
 
 first version
+
