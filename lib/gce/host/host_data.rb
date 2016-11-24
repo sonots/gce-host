@@ -51,6 +51,10 @@ class GCE
         instance.zone.split('/').last
       end
 
+      def machine_type
+        instance.machine_type.split('/').last
+      end
+
       def private_ip_address
         instance.network_interfaces.first.network_ip
       end
@@ -122,6 +126,7 @@ class GCE
           "hostname" => hostname,
           "roles" => roles,
           "zone" => zone,
+          "machine_type" => machine_type,
         }
         Config.optional_string_keys.each do |key|
           field = StringUtil.underscore(key)
