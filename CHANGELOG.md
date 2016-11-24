@@ -1,8 +1,12 @@
-# 0.1.2 (2016/11/24)
+# 0.1.3 (2016/11/24)
 
 Enhancements:
 
-* Support $HOME in GCE_HOST_CONFIG_FILE and GOOGLE_CREDENTIAL_FILE
+* Support ~ (home directory) in GCE_HOST_CONFIG_FILE and GOOGLE_CREDENTIAL_FILE
+
+# 0.1.2 (2016/11/24)
+
+yanked
 
 # 0.1.1 (2016/11/24)
 
