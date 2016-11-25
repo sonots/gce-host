@@ -37,29 +37,18 @@ class GCE
       end
 
       def self.config_default
+        # {'core'=>{'account'=>'xxx','project'=>'xxx'},'compute'=>{'zone'=>'xxx}}
         @config_default ||= File.readable?(config_default_file) ? IniFile.load(config_default_file).to_h : {}
-      end
-
-      def self.account_default
-        (config_default['core'] || {})['account']
       end
 
       def self.project_default
         (config_default['core'] || {})['project']
       end
 
-      def self.zone_default
-        (config_default['compute'] || {})['zone']
-      end
-
-      def self.account
-        @account ||= ENV['GOOGLE_ACCOUNT'] || config.fetch('GOOGLE_ACCOUNT', nil) || account_default
-      end
-
       def self.project
         @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil) || credentials['project_id']
         @project ||= credentials['client_email'].chomp('.iam.gserviceaccount.com').split('@').last if credentials['client_email']
-        @project ||= project_default
+        @project ||= project_default || raise('project is not given, configure GOOGLE_PROJECT or run $ gcloud config set project PROJECT_NAME')
       end
 
       def self.log_level
