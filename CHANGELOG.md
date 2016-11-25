@@ -1,3 +1,9 @@
+# 0.2.1 (2016/11/25)
+
+Changes
+
+* Environment variable GOOGLE_CREDENTIAL_FILE => GOOGLE_APPLICATION_CREDENTIALS
+
 # 0.2.0 (2016/11/25)
 
 Enhancements:
