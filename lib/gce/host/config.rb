@@ -20,11 +20,7 @@ class GCE
       end
 
       def self.credential_file
-        @credential_file ||= File.expand_path(
-          ENV['GOOGLE_CREDENTIAL_FILE'] ||
-          config.fetch('GOOGLE_CREDENTIAL_FILE', nil) ||
-          "~/.config/gcloud/legacy_credentials/#{service_account}/adc.json"
-        )
+        @credential_file ||= File.expand_path(ENV['GOOGLE_CREDENTIAL_FILE'] || config.fetch('GOOGLE_CREDENTIAL_FILE', nil) || credential_file_default)
       end
 
       def self.credential
@@ -49,6 +45,10 @@ class GCE
 
       def self.zone_default
         (config_default['compute'] || {})['zone']
+      end
+
+      def self.credential_file_default
+        @credential_file_default ||= File.expand_path("~/.config/gcloud/legacy_credentials/#{service_account}/adc.json")
       end
 
       def self.service_account
