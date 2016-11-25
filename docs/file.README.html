@@ -90,17 +90,15 @@ variables:</p>
 
 <p>GOOGLE API parameters:</p>
 <ul><li>
-<p><strong>AUTH_METHOD</strong>: Authentication method. Currently,
-<code>compute_engine</code>, <code>json_key</code> and
-<code>application_default</code> is available. The default is
-<code>applilcation_default</code>.</p>
+<p><strong>AUTH_METHOD (optional)</strong>: Authentication method. Currently,
+<code>compute_engine</code>, <code>service_account</code>,
+<code>authorized_user</code>, and <code>application_default</code> is
+available. The default reads from
+<code>GOOGLE_APPLICATION_CREDENTIALS</code>.</p>
 </li><li>
-<p><strong>GOOGLE_APPLICATION_CREDENTIALS (optional)</strong>: Path of
-credential file. Specify your service account json file for
-<code>json_key</code> authentication method. Try reading from
-<code>~/.config/gcloud/legacy_credentials/#{service_account}/adc.json</code>
-as default, where the <code>service_account</code> is being read from
-<code>~/.config/gcloud/configurations/config_default</code>.</p>
+<p><strong>GOOGLE_APPLICATION_CREDENTIALS (optional)</strong>: Specify path of
+json credential file. The default is
+<code>~/.config/gcloud/application_default_credentials.json</code>.</p>
 </li></ul>
 
 <p>gce-host parameters:</p>
@@ -306,7 +304,7 @@ $ env ($cat .env) terraform apply</code></pre>
 </div></div>
 
     <div id="footer">
-  Generated on Fri Nov 25 20:32:55 2016 by
+  Generated on Fri Nov 25 21:03:57 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.3.2).
 </div>

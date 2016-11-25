@@ -117,6 +117,50 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#account-class_method" title="account (class method)">+ (Object) <strong>account</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#account_default-class_method" title="account_default (class method)">+ (Object) <strong>account_default</strong> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#array_value_delimiter-class_method" title="array_value_delimiter (class method)">+ (Object) <strong>array_value_delimiter</strong> </a>
     
 
@@ -271,7 +315,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#credential-class_method" title="credential (class method)">+ (Object) <strong>credential</strong> </a>
+      <a href="#credentials-class_method" title="credentials (class method)">+ (Object) <strong>credentials</strong> </a>
     
 
     
@@ -293,7 +337,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#credential_file-class_method" title="credential_file (class method)">+ (Object) <strong>credential_file</strong> </a>
+      <a href="#credentials_file-class_method" title="credentials_file (class method)">+ (Object) <strong>credentials_file</strong> </a>
     
 
     
@@ -315,7 +359,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#credential_file_default-class_method" title="credential_file_default (class method)">+ (Object) <strong>credential_file_default</strong> </a>
+      <a href="#credentials_file_default-class_method" title="credentials_file_default (class method)">+ (Object) <strong>credentials_file_default</strong> </a>
     
 
     
@@ -603,50 +647,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#service_account-class_method" title="service_account (class method)">+ (Object) <strong>service_account</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#service_account_default-class_method" title="service_account_default (class method)">+ (Object) <strong>service_account_default</strong> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#status-class_method" title="status (class method)">+ (Object) <strong>status</strong> </a>
     
 
@@ -723,7 +723,67 @@ AWS usually, users do not need to care of this.</p>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="array_value_delimiter-class_method">
+  <h3 class="signature first" id="account-class_method">
+  
+    + (<tt>Object</tt>) <strong>account</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 55</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_account'>account</span>
+  <span class='ivar'>@account</span> <span class='op'>||=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_ACCOUNT</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_ACCOUNT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_account_default'>account_default</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="account_default-class_method">
+  
+    + (<tt>Object</tt>) <strong>account_default</strong> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_account_default'>account_default</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_config_default'>config_default</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>account</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="array_value_delimiter-class_method">
   
     + (<tt>Object</tt>) <strong>array_value_delimiter</strong> 
   
@@ -775,7 +835,7 @@ AWS usually, users do not need to care of this.</p>
       <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 18</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_auth_method'>auth_method</span>
-  <span class='ivar'>@auth_method</span> <span class='op'>||=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AUTH_METHOD</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AUTH_METHOD</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>application_default</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='ivar'>@auth_method</span> <span class='op'>||=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AUTH_METHOD</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AUTH_METHOD</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_credentials'>credentials</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>type</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>application_default</span><span class='tstring_end'>&#39;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -845,12 +905,12 @@ AWS usually, users do not need to care of this.</p>
       <pre class="lines">
 
 
-35
-36
-37</pre>
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_config_default'>config_default</span>
   <span class='ivar'>@config_default</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_readable?'>readable?</span><span class='lparen'>(</span><span class='id identifier rubyid_config_default_file'>config_default_file</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='const'>IniFile</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span><span class='lparen'>(</span><span class='id identifier rubyid_config_default_file'>config_default_file</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span> <span class='op'>:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -875,12 +935,12 @@ AWS usually, users do not need to care of this.</p>
       <pre class="lines">
 
 
-31
-32
-33</pre>
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_config_default_file'>config_default_file</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>~/.config/gcloud/configurations/config_default</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -955,9 +1015,9 @@ AWS usually, users do not need to care of this.</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="credential-class_method">
+  <h3 class="signature " id="credentials-class_method">
   
-    + (<tt>Object</tt>) <strong>credential</strong> 
+    + (<tt>Object</tt>) <strong>credentials</strong> 
   
 
   
@@ -969,15 +1029,15 @@ AWS usually, users do not need to care of this.</p>
       <pre class="lines">
 
 
-27
-28
-29</pre>
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 31</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_credential'>credential</span>
-  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_readable?'>readable?</span><span class='lparen'>(</span><span class='id identifier rubyid_credential_file'>credential_file</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_credential_file'>credential_file</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_credentials'>credentials</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_readable?'>readable?</span><span class='lparen'>(</span><span class='id identifier rubyid_credentials_file'>credentials_file</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_credentials_file'>credentials_file</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -985,9 +1045,9 @@ AWS usually, users do not need to care of this.</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="credential_file-class_method">
+  <h3 class="signature " id="credentials_file-class_method">
   
-    + (<tt>Object</tt>) <strong>credential_file</strong> 
+    + (<tt>Object</tt>) <strong>credentials_file</strong> 
   
 
   
@@ -1007,9 +1067,9 @@ AWS usually, users do not need to care of this.</p>
     <td>
       <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 22</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_credential_file'>credential_file</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_credentials_file'>credentials_file</span>
   <span class='comment'># ref. https://developers.google.com/identity/protocols/application-default-credentials
-</span>  <span class='ivar'>@credential_file</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_APPLICATION_CREDENTIALS</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_APPLICATION_CREDENTIALS</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_credential_file_default'>credential_file_default</span><span class='rparen'>)</span>
+</span>  <span class='ivar'>@credential_file</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_APPLICATION_CREDENTIALS</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_APPLICATION_CREDENTIALS</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_credentials_file_default'>credentials_file_default</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1017,9 +1077,9 @@ AWS usually, users do not need to care of this.</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="credential_file_default-class_method">
+  <h3 class="signature " id="credentials_file_default-class_method">
   
-    + (<tt>Object</tt>) <strong>credential_file_default</strong> 
+    + (<tt>Object</tt>) <strong>credentials_file_default</strong> 
   
 
   
@@ -1031,15 +1091,15 @@ AWS usually, users do not need to care of this.</p>
       <pre class="lines">
 
 
-51
-52
-53</pre>
+27
+28
+29</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 51</span>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 27</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_credential_file_default'>credential_file_default</span>
-  <span class='ivar'>@credential_file_default</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>~/.config/gcloud/legacy_credentials/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_service_account'>service_account</span><span class='embexpr_end'>}</span><span class='tstring_content'>/adc.json</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_credentials_file_default'>credentials_file_default</span>
+  <span class='ivar'>@credentials_file_default</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>~/.config/gcloud/application_default_credentials.json</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1298,7 +1358,7 @@ AWS usually, users do not need to care of this.</p>
       <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_project'>project</span>
-  <span class='ivar'>@project</span> <span class='op'>||=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_PROJECT</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_PROJECT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_credential'>credential</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>project_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_project_default'>project_default</span>
+  <span class='ivar'>@project</span> <span class='op'>||=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_PROJECT</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_PROJECT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_credentials'>credentials</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>project_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_project_default'>project_default</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1320,12 +1380,12 @@ AWS usually, users do not need to care of this.</p>
       <pre class="lines">
 
 
-43
-44
-45</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_project_default'>project_default</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_config_default'>config_default</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>project</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -1426,66 +1486,6 @@ AWS usually, users do not need to care of this.</p>
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="service_account-class_method">
-  
-    + (<tt>Object</tt>) <strong>service_account</strong> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-55
-56
-57</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 55</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_service_account'>service_account</span>
-  <span class='ivar'>@service_account</span> <span class='op'>||=</span> <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_SERVICE_ACCOUNT</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>GOOGLE_SERVICE_ACCOUNT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_service_account_default'>service_account_default</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="service_account_default-class_method">
-  
-    + (<tt>Object</tt>) <strong>service_account_default</strong> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-39
-40
-41</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 39</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_service_account_default'>service_account_default</span>
-  <span class='lparen'>(</span><span class='id identifier rubyid_config_default'>config_default</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>core</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>account</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
   <h3 class="signature " id="status-class_method">
   
     + (<tt>Object</tt>) <strong>status</strong> 
@@ -1572,12 +1572,12 @@ AWS usually, users do not need to care of this</p>
       <pre class="lines">
 
 
-47
-48
-49</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/gce/host/config.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_zone_default'>zone_default</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_config_default'>config_default</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>compute</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>zone</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
@@ -1592,7 +1592,7 @@ AWS usually, users do not need to care of this</p>
 </div>
 
     <div id="footer">
-  Generated on Fri Nov 25 20:32:55 2016 by
+  Generated on Fri Nov 25 21:03:58 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.3.2).
 </div>
