@@ -1,3 +1,9 @@
+# 0.3.1 (2016/11/25)
+
+Enhancements
+
+* Get project_id from credentials['client_email'] for a service account json
+
 # 0.3.0 (2016/11/25)
 
 Changes
