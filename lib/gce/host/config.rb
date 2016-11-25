@@ -1,5 +1,6 @@
 require 'dotenv'
 Dotenv.load
+require 'inifile'
 
 class GCE
   class Host
@@ -19,17 +20,43 @@ class GCE
       end
 
       def self.credential_file
-        @credential_file ||= File.expand_path(ENV['GOOGLE_CREDENTIAL_FILE'] || config.fetch('GOOGLE_CREDENTIAL_FILE'))
+        @credential_file ||= File.expand_path(
+          ENV['GOOGLE_CREDENTIAL_FILE'] ||
+          config.fetch('GOOGLE_CREDENTIAL_FILE', nil) ||
+          "~/.config/gcloud/legacy_credentials/#{service_account}/adc.json"
+        )
+      end
+
+      def self.credential
+        File.readable?(credential_file) ? JSON.parse(File.read(credential_file)) : {}
+      end
+
+      def self.config_default_file
+        File.expand_path('~/.config/gcloud/configurations/config_default')
+      end
+
+      def self.config_default
+        @config_default ||= File.readable?(config_default_file) ? IniFile.load(config_default_file).to_h : {}
+      end
+
+      def self.service_account_default
+        (config_default['core'] || {})['account']
+      end
+
+      def self.project_default
+        (config_default['core'] || {})['project']
+      end
+
+      def self.zone_default
+        (config_default['compute'] || {})['zone']
+      end
+
+      def self.service_account
+        @service_account ||= ENV['GOOGLE_SERVICE_ACCOUNT'] || config.fetch('GOOGLE_SERVICE_ACCOUNT', nil) || service_account_default
       end
 
       def self.project
-        return @project if @project
-        # ref. terraform https://www.terraform.io/docs/providers/google/
-        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil)
-        if @project.nil? and credential_file and File.readable?(credential_file)
-          @project ||= (JSON.parse(File.read(credential_file)) || {})['project_id']
-        end
-        @project
+        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil) || credential['project_id'] || project_default
       end
 
       def self.log_level

@@ -12,11 +12,12 @@ Gem::Specification.new do |gem|
 
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.executables   = `git ls-files -- exe/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
   gem.add_runtime_dependency 'google-api-client'
   gem.add_runtime_dependency 'dotenv'
+  gem.add_runtime_dependency 'inifile'
 
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rspec'
