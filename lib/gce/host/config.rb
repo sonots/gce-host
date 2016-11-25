@@ -16,16 +16,20 @@ class GCE
       end
 
       def self.auth_method
-        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', 'application_default')
+        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', nil) || credentials['type'] || 'application_default'
       end
 
-      def self.credential_file
+      def self.credentials_file
         # ref. https://developers.google.com/identity/protocols/application-default-credentials
-        @credential_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) || credential_file_default)
+        @credential_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) || credentials_file_default)
       end
 
-      def self.credential
-        File.readable?(credential_file) ? JSON.parse(File.read(credential_file)) : {}
+      def self.credentials_file_default
+        @credentials_file_default ||= File.expand_path("~/.config/gcloud/application_default_credentials.json")
+      end
+
+      def self.credentials
+        File.readable?(credentials_file) ? JSON.parse(File.read(credentials_file)) : {}
       end
 
       def self.config_default_file
@@ -36,7 +40,7 @@ class GCE
         @config_default ||= File.readable?(config_default_file) ? IniFile.load(config_default_file).to_h : {}
       end
 
-      def self.service_account_default
+      def self.account_default
         (config_default['core'] || {})['account']
       end
 
@@ -48,16 +52,12 @@ class GCE
         (config_default['compute'] || {})['zone']
       end
 
-      def self.credential_file_default
-        @credential_file_default ||= File.expand_path("~/.config/gcloud/legacy_credentials/#{service_account}/adc.json")
-      end
-
-      def self.service_account
-        @service_account ||= ENV['GOOGLE_SERVICE_ACCOUNT'] || config.fetch('GOOGLE_SERVICE_ACCOUNT', nil) || service_account_default
+      def self.account
+        @account ||= ENV['GOOGLE_ACCOUNT'] || config.fetch('GOOGLE_ACCOUNT', nil) || account_default
       end
 
       def self.project
-        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil) || credential['project_id'] || project_default
+        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil) || credentials['project_id'] || project_default
       end
 
       def self.log_level

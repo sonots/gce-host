@@ -36,10 +36,14 @@ class GCE
         when 'compute_engine'
           auth = Google::Auth::GCECredentials.new
 
-        when 'json_key'
-          credential_file = Config.credential_file
-          auth = File.open(credential_file) do |f|
+        when 'service_account'
+          auth = File.open(Config.credentials_file) do |f|
             Google::Auth::ServiceAccountCredentials.make_creds(json_key_io: f, scope: scope)
+          end
+
+        when 'authorized_user'
+          auth = File.open(Config.credentials_file) do |f|
+            Google::Auth::UserRefreshCredentials.make_creds(json_key_io: f, scope: scope)
           end
 
         when 'application_default'
