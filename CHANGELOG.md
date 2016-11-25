@@ -1,3 +1,9 @@
+# 0.2.0 (2016/11/25)
+
+Enhancements:
+
+* Try reading credential file from `~/.config/gcloud/legacy_credentials/#{service_account}/adc.json`
+
 # 0.1.3 (2016/11/24)
 
 Enhancements:
