@@ -16,12 +16,12 @@ class GCE
       end
 
       def self.auth_method
-        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', nil) || credentials['type'] || 'application_default'
+        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', nil) || 'application_default'
       end
 
       def self.credentials_file
         # ref. https://developers.google.com/identity/protocols/application-default-credentials
-        @credential_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) || credentials_file_default)
+        @credentials_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) || credentials_file_default)
       end
 
       def self.credentials_file_default
@@ -57,7 +57,9 @@ class GCE
       end
 
       def self.project
-        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil) || credentials['project_id'] || project_default
+        @project ||= ENV['GOOGLE_PROJECT'] || config.fetch('GOOGLE_PROJECT', nil) || credentials['project_id']
+        @project ||= credentials['client_email'].chomp('.iam.gserviceaccount.com').split('@').last if credentials['client_email']
+        @project ||= project_default
       end
 
       def self.log_level

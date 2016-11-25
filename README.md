@@ -21,8 +21,9 @@ You can write a configuration file located at `/etc/sysconfig/gce-host` (You can
 
 GOOGLE API parameters:
 
-* **AUTH_METHOD (optional)**: Authentication method. Currently, `compute_engine`, `service_account`, `authorized_user`, and `application_default` is available. The default reads from `GOOGLE_APPLICATION_CREDENTIALS`.
+* **AUTH_METHOD (optional)**: Authentication method. Currently, `compute_engine`, `service_account`, `authorized_user`, and `application_default` is available. The default is `application_default`
 * **GOOGLE_APPLICATION_CREDENTIALS (optional)**: Specify path of json credential file. The default is `~/.config/gcloud/application_default_credentials.json`.
+* **GOOGLE_PROJECT (optional)**: Specify project name of your GCP account. It tries to retrieve project_id if service account json is given in `GOOGLE_APPLICATION_CREDENTIALS`.
 
 gce-host parameters:
 
@@ -169,7 +170,7 @@ NOTE: Currently, mock is not supported yet. So, you have to create your own gclo
 Configure .env file as
 
 ```
-AUTH_METHOD=json_key
+AUTH_METHOD=service_account
 GOOGLE_APPLICATION_CREDENTIALS=service_acount.json
 GOOGLE_PROJECT=XXXXXXXXXXXXX
 OPTIONAL_STRING_KEYS=service,status
