@@ -1,3 +1,9 @@
+# 0.3.2 (2016/11/25)
+
+Enhancements
+
+* raise if project is not given
+
 # 0.3.1 (2016/11/25)
 
 Enhancements
