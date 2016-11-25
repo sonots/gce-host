@@ -1,3 +1,13 @@
+# 0.3.0 (2016/11/25)
+
+Changes
+
+* Change AUTH_METHOD 'json_key' to 'service_account'
+
+Enhancements
+
+* Support AUTH_METHOD 'authorized_user'
+
 # 0.2.1 (2016/11/25)
 
 Changes
