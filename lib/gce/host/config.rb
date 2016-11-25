@@ -20,7 +20,8 @@ class GCE
       end
 
       def self.credential_file
-        @credential_file ||= File.expand_path(ENV['GOOGLE_CREDENTIAL_FILE'] || config.fetch('GOOGLE_CREDENTIAL_FILE', nil) || credential_file_default)
+        # ref. https://developers.google.com/identity/protocols/application-default-credentials
+        @credential_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) || credential_file_default)
       end
 
       def self.credential

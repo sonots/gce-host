@@ -22,7 +22,7 @@ You can write a configuration file located at `/etc/sysconfig/gce-host` (You can
 GOOGLE API parameters:
 
 * **AUTH_METHOD**: Authentication method. Currently, `compute_engine`, `json_key` and `application_default` is available. The default is `applilcation_default`. 
-* **GOOGLE_CREDENTIAL_FILE (optional)**: Path of credential file. Specify your service account json file for `json_key` authentication method. Try reading from `~/.config/gcloud/legacy_credentials/#{service_account}/adc.json` as default, where the `service_account`  is being read from `~/.config/gcloud/configurations/config_default`.
+* **GOOGLE_APPLICATION_CREDENTIALS (optional)**: Path of credential file. Specify your service account json file for `json_key` authentication method. Try reading from `~/.config/gcloud/legacy_credentials/#{service_account}/adc.json` as default, where the `service_account`  is being read from `~/.config/gcloud/configurations/config_default`.
 
 gce-host parameters:
 
@@ -170,7 +170,7 @@ Configure .env file as
 
 ```
 AUTH_METHOD=json_key
-GOOGLE_CREDENTIAL_FILE=service_acount.json
+GOOGLE_APPLICATION_CREDENTIALS=service_acount.json
 GOOGLE_PROJECT=XXXXXXXXXXXXX
 OPTIONAL_STRING_KEYS=service,status
 OPTIONAL_ARRAY_KEYS=tags

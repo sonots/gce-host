@@ -95,9 +95,12 @@ variables:</p>
 <code>application_default</code> is available. The default is
 <code>applilcation_default</code>.</p>
 </li><li>
-<p><strong>GOOGLE_CREDENTIAL_FILE</strong>: Path of credential file. Specify
-your service account json file for <code>json_key</code> authentication
-method.</p>
+<p><strong>GOOGLE_APPLICATION_CREDENTIALS (optional)</strong>: Path of
+credential file. Specify your service account json file for
+<code>json_key</code> authentication method. Try reading from
+<code>~/.config/gcloud/legacy_credentials/#{service_account}/adc.json</code>
+as default, where the <code>service_account</code> is being read from
+<code>~/.config/gcloud/configurations/config_default</code>.</p>
 </li></ul>
 
 <p>gce-host parameters:</p>
@@ -260,7 +263,7 @@ gcloud account, and instances.</p>
 <p>Configure .env file as</p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'>AUTH_METHOD</span><span class='op'>=</span><span class='id identifier rubyid_json_key'>json_key</span>
-<span class='const'>GOOGLE_CREDENTIAL_FILE</span><span class='op'>=</span><span class='id identifier rubyid_service_acount'>service_acount</span><span class='period'>.</span><span class='id identifier rubyid_json'>json</span>
+<span class='const'>GOOGLE_APPLICATION_CREDENTIALS</span><span class='op'>=</span><span class='id identifier rubyid_service_acount'>service_acount</span><span class='period'>.</span><span class='id identifier rubyid_json'>json</span>
 <span class='const'>GOOGLE_PROJECT</span><span class='op'>=</span><span class='const'>XXXXXXXXXXXXX</span>
 <span class='const'>OPTIONAL_STRING_KEYS</span><span class='op'>=</span><span class='id identifier rubyid_service'>service</span><span class='comma'>,</span><span class='id identifier rubyid_status'>status</span>
 <span class='const'>OPTIONAL_ARRAY_KEYS</span><span class='op'>=</span><span class='id identifier rubyid_tags'>tags</span>
@@ -303,7 +306,7 @@ $ env ($cat .env) terraform apply</code></pre>
 </div></div>
 
     <div id="footer">
-  Generated on Wed Nov 23 20:08:31 2016 by
+  Generated on Fri Nov 25 20:32:54 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.3.2).
 </div>
