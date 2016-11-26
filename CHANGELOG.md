@@ -1,3 +1,9 @@
+# 0.3.3 (2016/11/26)
+
+Enhancements
+
+* Get auth_method from type in credentials if it exists
+
 # 0.3.2 (2016/11/25)
 
 Enhancements
