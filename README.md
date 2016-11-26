@@ -21,9 +21,9 @@ You can write a configuration file located at `/etc/sysconfig/gce-host` (You can
 
 GOOGLE API parameters:
 
-* **AUTH_METHOD (optional)**: Authentication method. Currently, `compute_engine`, `service_account`, `authorized_user`, and `application_default` is available. The default is `application_default`
+* **AUTH_METHOD (optional)**: Authentication method. Currently, `compute_engine`, `service_account`, `authorized_user`, and `application_default` is available. The default is `type` in `GOOGLE_APPLICATION_CREDENTIALS` if it exists, otherwise `compute_engine`.
 * **GOOGLE_APPLICATION_CREDENTIALS (optional)**: Specify path of json credential file. The default is `~/.config/gcloud/application_default_credentials.json`.
-* **GOOGLE_PROJECT (optional)**: Specify project name of your GCP account. It tries to retrieve project_id if service account json is given in `GOOGLE_APPLICATION_CREDENTIALS`.
+* **GOOGLE_PROJECT (optional)**: Specify project name of your GCP account. The default is `project_id` in `GOOGLE_APPLICATION_CREDENTIALS` if it exists (typically, available in service acaccount json)
 
 gce-host parameters:
 

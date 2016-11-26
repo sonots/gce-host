@@ -16,7 +16,7 @@ class GCE
       end
 
       def self.auth_method
-        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', nil) || 'application_default'
+        @auth_method ||= ENV['AUTH_METHOD'] || config.fetch('AUTH_METHOD', nil) || credentials['type'] || 'compute_engine'
       end
 
       def self.credentials_file
