@@ -17,7 +17,7 @@ You can manage roles of a host, and search hosts having a specified role using t
 
 ## Configuration
 
-You can write a configuration file located at `/etc/sysconfig/gce-host` for CentOS, or `/etc/default/gce-host` for Ubuntu (You can configure this path by `GCE_HOST_CONFIG_FILE` environment variable), or as environment variables:
+You can write a configuration file located at `/etc/sysconfig/gce-host` or `/etc/default/gce-host` (You can configure this path by `GCE_HOST_CONFIG_FILE` environment variable), or as environment variables:
 
 GOOGLE API parameters:
 
