@@ -1,3 +1,9 @@
+# 0.3.4 (2016/11/28)
+
+Enhancements
+
+* Support /etc/default/gce-host as default config file location for Ubuntu
+
 # 0.3.3 (2016/11/26)
 
 Enhancements
