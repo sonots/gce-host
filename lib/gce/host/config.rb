@@ -12,7 +12,7 @@ class GCE
       end
 
       def self.config_file
-        @config_file ||= File.expand_path(ENV.fetch('GCE_HOST_CONFIG_FILE', '/etc/sysconfig/gce-host'))
+        @config_file ||= File.expand_path(ENV.fetch('GCE_HOST_CONFIG_FILE', File.exist?('/etc/sysconfig/gce-host') ? '/etc/sysconfig/gce-host' : '/etc/default/gce-host'))
       end
 
       def self.auth_method
