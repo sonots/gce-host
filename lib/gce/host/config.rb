@@ -93,6 +93,10 @@ class GCE
         @status ||= ENV['STATUS'] || config.fetch('STATUS', 'status')
       end
 
+      def self.role_max_depth
+        @role_max_depth ||= Integer(ENV['ROLE_MAX_DEPTH'] || config.fetch('ROLE_MAX_DEPTH', 3))
+      end
+
       # private
 
       def self.optional_array_options

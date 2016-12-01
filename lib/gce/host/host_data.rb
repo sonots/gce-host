@@ -175,14 +175,14 @@ class GCE
       def role_match?(condition)
         # usage is an alias of role
         if role = (condition[:role] || condition[:usage])
-          role1, role2, role3 = role.first.split(':')
+          parts = role.first.split(Config.role_value_delimiter, Config.role_max_depth)
         else
-          role1 = (condition[:role1] || condition[:usage1] || []).first
-          role2 = (condition[:role2] || condition[:usage2] || []).first
-          role3 = (condition[:role3] || condition[:usage3] || []).first
+          parts = 1.upto(Config.role_max_depth).map do |i|
+            (condition["role#{i}".to_sym] || condition["usage#{i}".to_sym] || []).first
+          end
         end
-        if role1
-          return false unless roles.find {|role| role.match?(role1, role2, role3) }
+        if parts.first
+          return false unless roles.find {|role| role.match?(*parts) }
         end
         true
       end
@@ -195,7 +195,10 @@ class GCE
       end
 
       def instance_match?(condition)
-        condition = HashUtil.except(condition, :role, :role1, :role2, :role3, :usage, :usage1, :usage2, :usage3, Config.status.to_sym)
+        excepts = [:role, :usage, Config.status.to_sym]
+        1.upto(Config.role_max_depth).each {|i| excepts << "role#{i}".to_sym }
+        1.upto(Config.role_max_depth).each {|i| excepts << "usage#{i}".to_sym }
+        condition = HashUtil.except(condition, *excepts)
         condition.each do |key, values|
           v = instance_variable_recursive_get(key)
           if v.is_a?(Array)
