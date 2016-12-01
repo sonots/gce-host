@@ -4,6 +4,8 @@ require 'inifile'
 
 class GCE
   class Host
+    class ConfigError < StandardError; end
+
     class Config
       def self.configure(params)
         params.each do |key, val|

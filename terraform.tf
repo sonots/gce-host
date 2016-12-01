@@ -5,7 +5,7 @@ provider "google" {
 
 resource "google_compute_instance" "gce-host-web" {
   name         = "gce-host-web"
-  machine_type = "n1-standard-1"
+  machine_type = "f1-micro"
   zone         = "asia-northeast1-a"
 
   disk {
@@ -20,7 +20,7 @@ resource "google_compute_instance" "gce-host-web" {
   }
 
   metadata {
-    roles = "foo,web:test"
+    roles = "foo,web:test:foo:bar:baz"
     service = "gce-host"
     status = "reserve"
     tags = "standby"
@@ -29,7 +29,7 @@ resource "google_compute_instance" "gce-host-web" {
 
 resource "google_compute_instance" "gce-host-db" {
   name         = "gce-host-db"
-  machine_type = "n1-standard-1"
+  machine_type = "f1-micro"
   zone         = "asia-northeast1-a"
 
   disk {
