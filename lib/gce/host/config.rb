@@ -4,6 +4,8 @@ require 'inifile'
 
 class GCE
   class Host
+    class ConfigError < StandardError; end
+
     class Config
       def self.configure(params)
         params.each do |key, val|
@@ -91,6 +93,10 @@ class GCE
       # usually, users do not need to care of this
       def self.status
         @status ||= ENV['STATUS'] || config.fetch('STATUS', 'status')
+      end
+
+      def self.role_max_depth
+        @role_max_depth ||= Integer(ENV['ROLE_MAX_DEPTH'] || config.fetch('ROLE_MAX_DEPTH', 3))
       end
 
       # private

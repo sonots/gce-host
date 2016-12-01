@@ -35,6 +35,7 @@ gce-host parameters:
 * **OPTIONAL_STRING_KEYS (optional)**: You may add optional non-array metadata keys. You can specify multiple keys like `service,status`. 
 * **OPTIONAL_ARRAY_KEYS (optional)**: You may add optional array metadata keys. Array allows multiple values delimited by `ARRAY_VALUE_DELIMITER` (default: `,`)
 * **ARRAY_VALUE_DELIMITER (optional)**: A delimiter to express array. Default is `,`
+* **ROLE_MAX_DEPTH (optional)**: The maximum depth of levels of roles. Default is 3.
 * **LOG_LEVEL (optional)**: Log level such as `info`, `debug`, `error`. The default is `info`. 
 
 See [example.conf](./example/example.conf)
@@ -120,9 +121,9 @@ $ bin/gce-host --help
 Usage: gce-host [options]
         --hostname one,two,three     name or private_dns_name
     -r, --role one,two,three         role
-        --r1, --role1 one,two,three  role1, the 1st part of role delimited by :
-        --r2, --role2 one,two,three  role2, the 2st part of role delimited by :
-        --r3, --role3 one,two,three  role3, the 3st part of role delimited by :
+        --r1, --role1 one,two,three  role1, 1th part of role delimited by :
+        --r2, --role2 one,two,three  role2, 2th part of role delimited by :
+        --r3, --role3 one,two,three  role3, 3th part of role delimited by :
         --state one,two,three        filter with instance state (default: running)
     -a, --all                        list all hosts (remove default filter)
         --private-ip, --ip           show private ip address instead of hostname
