@@ -84,21 +84,27 @@ using thease metadata with this gem.</p>
 <h2 id="label-Configuration">Configuration</h2>
 
 <p>You can write a configuration file located at
-<code>/etc/sysconfig/gce-host</code> (You can configure this path by
-<code>GCE_HOST_CONFIG_FILE</code> environment variable), or as environment
-variables:</p>
+<code>/etc/sysconfig/gce-host</code> or <code>/etc/default/gce-host</code>
+(You can configure this path by <code>GCE_HOST_CONFIG_FILE</code>
+environment variable), or as environment variables:</p>
 
 <p>GOOGLE API parameters:</p>
 <ul><li>
 <p><strong>AUTH_METHOD (optional)</strong>: Authentication method. Currently,
 <code>compute_engine</code>, <code>service_account</code>,
 <code>authorized_user</code>, and <code>application_default</code> is
-available. The default reads from
-<code>GOOGLE_APPLICATION_CREDENTIALS</code>.</p>
+available. The default is <code>type</code> in
+<code>GOOGLE_APPLICATION_CREDENTIALS</code> if it exists, otherwise
+<code>compute_engine</code>.</p>
 </li><li>
 <p><strong>GOOGLE_APPLICATION_CREDENTIALS (optional)</strong>: Specify path of
 json credential file. The default is
 <code>~/.config/gcloud/application_default_credentials.json</code>.</p>
+</li><li>
+<p><strong>GOOGLE_PROJECT (optional)</strong>: Specify project name of your
+GCP account. The default is <code>project_id</code> in
+<code>GOOGLE_APPLICATION_CREDENTIALS</code> if it exists (typically,
+available in service acaccount json)</p>
 </li></ul>
 
 <p>gce-host parameters:</p>
@@ -129,6 +135,9 @@ metadata keys. Array allows multiple values delimited by
 </li><li>
 <p><strong>ARRAY_VALUE_DELIMITER (optional)</strong>: A delimiter to express
 array. Default is <code>,</code></p>
+</li><li>
+<p><strong>ROLE_MAX_DEPTH (optional)</strong>: The maximum depth of levels of
+roles. Default is 3.</p>
 </li><li>
 <p><strong>LOG_LEVEL (optional)</strong>: Log level such as <code>info</code>,
 <code>debug</code>, <code>error</code>. The default is <code>info</code>.</p>
@@ -209,9 +218,9 @@ gce-host-web</code></pre>
 Usage: gce-host [options]
         --hostname one,two,three     name or private_dns_name
     -r, --role one,two,three         role
-        --r1, --role1 one,two,three  role1, the 1st part of role delimited by :
-        --r2, --role2 one,two,three  role2, the 2st part of role delimited by :
-        --r3, --role3 one,two,three  role3, the 3st part of role delimited by :
+        --r1, --role1 one,two,three  role1, 1th part of role delimited by :
+        --r2, --role2 one,two,three  role2, 2th part of role delimited by :
+        --r3, --role3 one,two,three  role3, 3th part of role delimited by :
         --state one,two,three        filter with instance state (default: running)
     -a, --all                        list all hosts (remove default filter)
         --private-ip, --ip           show private ip address instead of hostname
@@ -260,7 +269,7 @@ gcloud account, and instances.</p>
 
 <p>Configure .env file as</p>
 
-<pre class="code ruby"><code class="ruby"><span class='const'>AUTH_METHOD</span><span class='op'>=</span><span class='id identifier rubyid_json_key'>json_key</span>
+<pre class="code ruby"><code class="ruby"><span class='const'>AUTH_METHOD</span><span class='op'>=</span><span class='id identifier rubyid_service_account'>service_account</span>
 <span class='const'>GOOGLE_APPLICATION_CREDENTIALS</span><span class='op'>=</span><span class='id identifier rubyid_service_acount'>service_acount</span><span class='period'>.</span><span class='id identifier rubyid_json'>json</span>
 <span class='const'>GOOGLE_PROJECT</span><span class='op'>=</span><span class='const'>XXXXXXXXXXXXX</span>
 <span class='const'>OPTIONAL_STRING_KEYS</span><span class='op'>=</span><span class='id identifier rubyid_service'>service</span><span class='comma'>,</span><span class='id identifier rubyid_status'>status</span>
@@ -271,7 +280,7 @@ gcloud account, and instances.</p>
 
 <pre class="code ruby"><code class="ruby">$ brew install terraform
 $ env $(cat .env) terraform plan
-$ env ($cat .env) terraform apply</code></pre>
+$ env $(cat .env) terraform apply</code></pre>
 
 <p>Run test</p>
 
@@ -304,7 +313,7 @@ $ env ($cat .env) terraform apply</code></pre>
 </div></div>
 
     <div id="footer">
-  Generated on Fri Nov 25 21:03:57 2016 by
+  Generated on Fri Dec  2 12:11:40 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-2.3.2).
 </div>
