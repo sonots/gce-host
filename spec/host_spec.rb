@@ -86,31 +86,82 @@ describe GCE::Host do
 
   context 'by role' do
     context 'by a role' do
-      let(:subject) { GCE::Host.new(role: 'web:test').first }
-      it_should_behave_like 'host'
+      context 'hit' do
+        let(:subject) { GCE::Host.new(role: 'web:test').first }
+        it_should_behave_like 'host'
+      end
+
+      context 'miss' do
+        let(:subject) { GCE::Host.new(role: 'web:te').first }
+        it { expect(subject).to be_nil }
+      end
     end
 
     context 'by a role1' do
-      let(:subject) { GCE::Host.new(role1: 'web').first }
-      it_should_behave_like 'host'
+      context 'hit' do
+        let(:subject) { GCE::Host.new(role1: 'web').first }
+        it_should_behave_like 'host'
+      end
+
+      context 'miss' do
+        let(:subject) { GCE::Host.new(role1: 'w').first }
+        it { expect(subject).to be_nil }
+      end
+    end
+
+    context 'by a role2' do
+      context 'hit' do
+        let(:hosts) { GCE::Host.new(role2: 'test').to_a }
+        it { expect(hosts.size).to be >= 2 }
+      end
+
+      context 'miss' do
+        let(:hosts) { GCE::Host.new(role2: 'te').to_a }
+        it { expect(hosts.size).to eq(0) }
+      end
+    end
+
+    context 'by a role3' do
+      context 'miss' do
+        let(:hosts) { GCE::Host.new(role3: 'does_not_have_role3').to_a }
+        it { expect(hosts.size).to eq(0) }
+      end
     end
 
     context 'by multiple roles (or)' do
-      let(:hosts) {
-        GCE::Host.new(
-          {
-            role1: 'web',
-            role2: 'test',
-          },
-          {
-            role1: 'db',
-            role2: 'test',
-          },
-        ).to_a
-      }
-      let(:subject) { hosts.first }
-      it { expect(hosts.size).to be >= 2 }
-      it_should_behave_like 'host'
+      context 'hit' do
+        let(:hosts) {
+          GCE::Host.new(
+            {
+              role1: 'web',
+              role2: 'test',
+            },
+            {
+              role1: 'db',
+              role2: 'test',
+            },
+          ).to_a
+        }
+        let(:subject) { hosts.first }
+        it { expect(hosts.size).to be >= 2 }
+        it_should_behave_like 'host'
+      end
+
+      context 'miss' do
+        let(:hosts) {
+          GCE::Host.new(
+            {
+              role1: 'web',
+              role2: 'te',
+            },
+            {
+              role1: 'db',
+              role2: 'te',
+            },
+          ).to_a
+        }
+        it { expect(hosts.size).to eq(0) }
+      end
     end
   end
 
