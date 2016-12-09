@@ -1,3 +1,9 @@
+# 0.4.2 (2016/12/08)
+
+Enhancements:
+
+* Support /etc/google/auth/application_default_credentials.json
+
 # 0.4.1 (2016/12/02)
 
 Fixes:
