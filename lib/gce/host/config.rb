@@ -23,11 +23,16 @@ class GCE
 
       def self.credentials_file
         # ref. https://developers.google.com/identity/protocols/application-default-credentials
-        @credentials_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) || credentials_file_default)
+        @credentials_file ||= File.expand_path(ENV['GOOGLE_APPLICATION_CREDENTIALS'] || config.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil) ||
+          (File.exist?(global_application_default_credentials_file) ? global_application_default_credentials_file : application_default_credentials_file))
       end
 
-      def self.credentials_file_default
-        @credentials_file_default ||= File.expand_path("~/.config/gcloud/application_default_credentials.json")
+      def self.application_default_credentials_file
+        @application_default_credentials_file ||= File.expand_path("~/.config/gcloud/application_default_credentials.json")
+      end
+
+      def self.global_application_default_credentials_file
+        @global_application_default_credentials_file ||= '/etc/google/auth/application_default_credentials.json'
       end
 
       def self.credentials
