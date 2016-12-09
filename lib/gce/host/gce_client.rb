@@ -27,7 +27,7 @@ class GCE
         scope = "https://www.googleapis.com/auth/compute.readonly"
         client = Google::Apis::ComputeV1::ComputeService.new
         client.client_options.application_name = 'gce-host'
-        client.client_options.application_name = GCE::Host::VERSION
+        client.client_options.application_version = GCE::Host::VERSION
         client.request_options.retries = Config.retries
         client.request_options.timeout_sec = Config.timeout_sec
         client.request_options.open_timeout_sec = Config.open_timeout_sec
