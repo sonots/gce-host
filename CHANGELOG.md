@@ -1,3 +1,9 @@
+# 0.4.3 (2017/01/20)
+
+Enhancements:
+
+* cli: sort by hostname
+
 # 0.4.2 (2016/12/08)
 
 Enhancements:
