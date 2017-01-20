@@ -97,7 +97,7 @@ class GCE
       end
 
       def run
-        hosts = GCE::Host.new(condition)
+        hosts = GCE::Host.new(condition).sort_by {|host| host.hostname }
         if options[:info]
           hosts.each do |host|
             $stdout.puts host.info
