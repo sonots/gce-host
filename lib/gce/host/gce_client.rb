@@ -29,8 +29,14 @@ class GCE
         client.client_options.application_name = 'gce-host'
         client.client_options.application_version = GCE::Host::VERSION
         client.request_options.retries = Config.retries
-        client.request_options.timeout_sec = Config.timeout_sec
-        client.request_options.open_timeout_sec = Config.open_timeout_sec
+        if client.request_options.respond_to?(:timeout_sec)
+          client.request_options.timeout_sec = Config.timeout_sec
+          client.request_options.open_timeout_sec = Config.open_timeout_sec
+        else # google-api-ruby-client >= v0.11.0
+          client.client_options.open_timeout_sec = Config.open_timeout_sec
+          client.client_options.send_timeout_sec = Config.send_timeout_sec
+          client.client_options.read_timeout_sec = Config.read_timeout_sec
+        end
 
         case Config.auth_method
         when 'compute_engine'
