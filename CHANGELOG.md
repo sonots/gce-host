@@ -1,3 +1,11 @@
+# 0.4.4 (2017/05/20)
+
+Fixes:
+
+* Fix to support multile roles and roleNs with command line arguments as
+  * gce-host --role foo:a,bar:b
+  * gce-host --role1 foo,bar --role2 a,b
+
 # 0.4.3 (2017/01/20)
 
 Enhancements:
