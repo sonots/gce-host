@@ -66,12 +66,23 @@ class GCE
         @retries ||= ENV['RETRIES'] || config.fetch('RETRIES', 5)
       end
 
+      def self.open_timeout_sec
+        @open_timeout_sec ||= ENV['OPEN_TIMEOUT_SEC'] || config.fetch('OPEN_TIMEOUT_SEC', 300)
+      end
+
+      # google-api-ruby-client < v0.11.0
       def self.timeout_sec
         @timeout_sec ||= ENV['TIMEOUT_SEC'] || config.fetch('TIMEOUT_SEC', 300)
       end
 
-      def self.open_timeout_sec
-        @open_timeout_sec ||= ENV['OPEN_TIMEOUT_SEC'] || config.fetch('OPEN_TIMEOUT_SEC', 300)
+      # google-api-ruby-client >= v0.11.0
+      def self.send_timeout_sec
+        @send_timeout_sec ||= ENV['SEND_TIMEOUT_SEC'] || config.fetch('SEND_TIMEOUT_SEC', 300)
+      end
+
+      # google-api-ruby-client >= v0.11.0
+      def self.read_timeout_sec
+        @read_timeout_sec ||= ENV['READ_TIMEOUT_SEC'] || config.fetch('READ_TIMEOUT_SEC', timeout_sec)
       end
 
       def self.roles_key
