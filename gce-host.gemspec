@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- exe/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency 'google-api-client'
+  gem.add_runtime_dependency 'google-api-client', '~> 0.11'
   gem.add_runtime_dependency 'dotenv'
   gem.add_runtime_dependency 'inifile'
 
