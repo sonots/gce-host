@@ -10,16 +10,24 @@ class GCE
       def instances(condition = {})
         filter = build_filter(condition)
         instances = []
-        res = client.list_aggregated_instances(Config.project, filter: filter)
+        res = list_aggregated_instances(Config.project, filter: filter)
         instances.concat(res.items.values.map(&:instances).compact.flatten(1))
         while res.next_page_token
-          res = client.list_aggregated_instances(Config.project, filter: filter, page_token: res.next_page_token)
+          res = list_aggregated_instances(project, filter: filter, page_token: res.next_page_token)
           instances.concat(res.items.values.map(&:instances).compact.flatten(1))
         end
         instances
       end
 
       private
+
+      def list_aggregated_instances(project, **kwargs)
+        if client.respond_to?(:list_aggregated_instances) # < 0.12.0
+          client.list_aggregated_instances(Config.project, **kwargs)
+        else
+          client.aggregated_instance_list(Config.project, **kwargs)
+        end
+      end
 
       def client
         return @client if @client && @client_expiration > Time.now
