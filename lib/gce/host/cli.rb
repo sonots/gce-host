@@ -22,7 +22,7 @@ class GCE
         end
 
         opts = {
-          state: ["running"]
+          Config.status.to_sym => ["running"]
         }
 
         op.on('--hostname one,two,three', Array, "name") {|v|
