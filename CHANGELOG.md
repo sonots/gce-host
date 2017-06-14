@@ -1,3 +1,13 @@
+# 0.5.1 (2017/05/20)
+
+Enhancements:
+
+* Support google-api-ruby-client >= v0.12.0
+
+Fixes:
+
+* Fix to use `Config.status: ['running']` instead of `state: ['running']`
+
 # 0.5.0 (2017/05/20)
 
 Enhancements:
