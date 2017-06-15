@@ -16,7 +16,9 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- exe/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency 'google-api-client'
+  # v0.12.0 has unintentional incompatibility issues, let us skip it
+  # https://github.com/google/google-api-ruby-client/issues/590
+  gem.add_runtime_dependency 'google-api-client', '!= 0.12.0'
   gem.add_runtime_dependency 'dotenv'
   gem.add_runtime_dependency 'inifile'
 
