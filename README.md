@@ -172,7 +172,7 @@ Configure .env file as
 
 ```
 AUTH_METHOD=service_account
-GOOGLE_APPLICATION_CREDENTIALS=service_account.json
+GOOGLE_APPLICATION_CREDENTIALS=service_acount.json
 GOOGLE_PROJECT=XXXXXXXXXXXXX
 OPTIONAL_STRING_KEYS=service,status
 OPTIONAL_ARRAY_KEYS=tags
