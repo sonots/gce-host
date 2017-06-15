@@ -1,4 +1,12 @@
-# 0.5.1 (2017/05/20)
+# 0.5.2 (2017/06/15)
+
+Changes:
+
+* The incompatiblity issues of google-api-ruby-client v0.12.0 was resolved (reverted) in v0.13.0.
+  * So, revert the support of google-api-ruby-client v0.12.0 to keep codes clean.
+  * And, drop support of google-api-ruby-client v0.12.0.
+
+# 0.5.1 (2017/06/14)
 
 Enhancements:
 
