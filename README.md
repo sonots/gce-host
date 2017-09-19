@@ -176,6 +176,8 @@ GOOGLE_APPLICATION_CREDENTIALS=service_account.json
 GOOGLE_PROJECT=XXXXXXXXXXXXX
 OPTIONAL_STRING_KEYS=service,status
 OPTIONAL_ARRAY_KEYS=tags
+ROLE_MAX_DEPTH=5
+STATUS=state
 ```
 
 Prepare `service_account.json`.
