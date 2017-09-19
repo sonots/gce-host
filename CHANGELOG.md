@@ -1,3 +1,9 @@
+# 0.5.3 (2017/09/19)
+
+Fixes:
+
+* Fix --all option did not show all options
+
 # 0.5.2 (2017/06/15)
 
 Changes:
