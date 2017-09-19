@@ -203,9 +203,9 @@ class GCE
         condition.each do |key, values|
           v = instance_variable_recursive_get(key)
           if v.is_a?(Array)
-            return false unless v.find {|_| values.include?(_) }
+            return false unless v.find {|_| values.include?(_.to_s) }
           else
-            return false unless values.include?(v)
+            return false unless values.include?(v.to_s)
           end
         end
         true
