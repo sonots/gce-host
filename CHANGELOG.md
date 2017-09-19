@@ -1,3 +1,9 @@
+# 0.5.4 (2017/09/19)
+
+Fixes:
+
+* Fix --instance-id option was not working
+
 # 0.5.3 (2017/09/19)
 
 Fixes:
