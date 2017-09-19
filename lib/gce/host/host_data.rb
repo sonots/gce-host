@@ -114,7 +114,6 @@ class GCE
       #
       # @param [Hash] condition search parameters
       def match?(condition)
-        return false if !condition[Config.status.to_sym] and (terminated? or stopping?)
         return false unless role_match?(condition)
         return false unless status_match?(condition)
         return false unless instance_match?(condition)
