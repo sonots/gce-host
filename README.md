@@ -178,6 +178,8 @@ OPTIONAL_STRING_KEYS=service,status
 OPTIONAL_ARRAY_KEYS=tags
 ```
 
+Prepare `service_account.json`.
+
 Install terraform and run to create instances for tests
 
 ```

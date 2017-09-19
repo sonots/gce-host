@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = "${file("terraform.json")}"
+  credentials = "${file("service_account.json")}"
   region = "asia-northeast1"
 }
 
