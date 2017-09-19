@@ -90,6 +90,7 @@ class GCE
         roles
       end
 
+      # NOTE: this is stopped status in the case of GCE unlike EC2
       def terminated?
         instance.status == "TERMINATED"
       end
