@@ -1,3 +1,9 @@
+# 0.5.5 (2017/09/20)
+
+Enhancements:
+
+* Add --version option
+
 # 0.5.4 (2017/09/19)
 
 Fixes:
