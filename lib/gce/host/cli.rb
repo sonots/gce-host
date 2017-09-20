@@ -19,6 +19,10 @@ class GCE
             puts "error: #{msg}" if msg
             exit 1
           end
+          define_method(:version) do
+            puts GCE::Host::VERSION
+            exit 0
+          end
         end
 
         opts = {
@@ -82,6 +86,9 @@ class GCE
         op.on('-h', '--help', "show help") {|v|
           opts[:help] = v
         }
+        op.on('-v', '--version', "show version") {|v|
+          opts[:version] = v
+        }
 
         begin
           args = op.parse(argv)
@@ -91,6 +98,10 @@ class GCE
 
         if opts[:help]
           usage
+        end
+
+        if opts[:version]
+          version
         end
 
         opts
