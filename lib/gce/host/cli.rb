@@ -82,6 +82,10 @@ class GCE
         op.on('-h', '--help', "show help") {|v|
           opts[:help] = v
         }
+        op.on('-v', '--version', "show version") {|v|
+          puts GCE::Host::VERSION
+          exit 0
+        }
 
         begin
           args = op.parse(argv)
