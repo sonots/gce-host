@@ -64,11 +64,14 @@ class GCE
       end
 
       def public_ip_address
-        instance.network_interfaces.first.access_configs.first.nat_ip
+        access_configs = instance.network_interfaces.first.access_configs
+        access_configs ? access_configs.first.nat_ip : nil
       end
 
       def public_ip_addresses
-        instance.network_interfaces.map {|i| i.access_configs.map(&:nat_ip) }.flatten(1)
+        instance.network_interfaces.map {|i|
+          i.access_configs ? i.access_configs.map(&:nat_ip) : nil
+        }.flatten(1).compact
       end
 
       def creation_timestamp
