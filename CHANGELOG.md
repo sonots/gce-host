@@ -1,3 +1,9 @@
+# 0.5.6 (2017/01/22)
+
+Fixes:
+
+* Fix -j option was not working (not assign external ip case)
+
 # 0.5.5 (2017/09/20)
 
 Enhancements:
